@@ -28,9 +28,6 @@ public section.
       !IV_FIELD_NAME type STRING
     returning
       value(RV_ABAP_FIELD) type STRING .
-  methods GET_ABAP_FIELD_NAMES
-    returning
-      value(RV_FIELD_NAMES) type STRINGTAB .
   PROTECTED SECTION.
   PRIVATE SECTION.
 
@@ -74,16 +71,6 @@ CLASS ZCL_GW_MODEL IMPLEMENTATION.
          ).
 
     rv_abap_field = property-name.
-
-  ENDMETHOD.
-
-
-  METHOD get_abap_field_names.
-
-*    DATA(properties) = get_entity_properties( |{ iv_entity_name }| ).
-*
-*    READ TABLE properties INTO rs_property
-*      WITH KEY external_name = iv_field_name.
 
   ENDMETHOD.
 

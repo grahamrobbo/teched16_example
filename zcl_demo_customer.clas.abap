@@ -233,12 +233,12 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
               )->zif_gw_methods~map_to_entity( entity ).
         ENDCASE.
 
-      CATCH cx_root INTO DATA(cx).
+      CATCH zcx_demo_bo cx_sy_itab_line_not_found INTO DATA(zcx_demo_bo).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid   = /iwbep/cx_mgw_busi_exception=>business_error
-            previous = cx
-            message  = |{ cx->get_text( ) }|.
+            previous = zcx_demo_bo
+            message  = |{ zcx_demo_bo->get_text( ) }|.
     ENDTRY.
 
   ENDMETHOD.
@@ -359,8 +359,7 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
       CHECK <kunnr> IS ASSIGNED.
       TRY.
           zcl_demo_customer=>get( <kunnr> )->zif_gw_methods~map_to_entity( entity ).
-        CATCH zcx_demo_bo cx_root INTO DATA(cx1).
-          DATA(test) = cx1->get_text( ).
+        CATCH zcx_demo_bo cx_root INTO DATA(cx_root).
       ENDTRY.
     ENDLOOP.
 

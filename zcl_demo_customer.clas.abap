@@ -255,11 +255,11 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
         DATA(struct_descr) = get_struct_descr( et_entityset ).
         CREATE DATA entity TYPE HANDLE struct_descr.
         ASSIGN entity->* TO FIELD-SYMBOL(<entity>).
-      CATCH cx_sy_create_data_error INTO DATA(cx).
+      CATCH cx_sy_create_data_error INTO DATA(cx_sy_create_data_error).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_tech_exception
           EXPORTING
             textid   = /iwbep/cx_mgw_tech_exception=>internal_error
-            previous = cx.
+            previous = cx_sy_create_data_error.
     ENDTRY.
 
     " Process any orderby query options
@@ -359,7 +359,7 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
       CHECK <kunnr> IS ASSIGNED.
       TRY.
           zcl_demo_customer=>get( <kunnr> )->zif_gw_methods~map_to_entity( entity ).
-        CATCH zcx_demo_bo cx_root INTO DATA(cx_root).
+        CATCH zcx_demo_bo.
       ENDTRY.
     ENDLOOP.
 

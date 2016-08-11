@@ -288,11 +288,11 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
         DATA(struct_descr) = get_struct_descr( et_entityset ).
         CREATE DATA entity TYPE HANDLE struct_descr.
         ASSIGN entity->* TO FIELD-SYMBOL(<entity>).
-      CATCH cx_sy_create_data_error INTO DATA(cx).
+      CATCH cx_sy_create_data_error INTO DATA(cx_sy_create_data_error).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_tech_exception
           EXPORTING
             textid   = /iwbep/cx_mgw_tech_exception=>internal_error
-            previous = cx.
+            previous = cx_sy_create_data_error.
     ENDTRY.
 
     TRY.
@@ -312,12 +312,12 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
           item->zif_gw_methods~map_to_entity( entity ).
         ENDLOOP.
 
-      CATCH cx_root INTO DATA(cx_root).
+      CATCH cx_sy_itab_line_not_found zcx_demo_bo INTO DATA(exception).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid   = /iwbep/cx_mgw_busi_exception=>business_error
-            previous = cx_root
-            message  = |{ cx_root->get_text( ) }|.
+            previous = exception
+            message  = |{ exception->get_text( ) }|.
     ENDTRY.
 
   ENDMETHOD.

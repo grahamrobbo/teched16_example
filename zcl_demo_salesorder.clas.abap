@@ -187,11 +187,11 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
         DATA(struct_descr) = get_struct_descr( et_entityset ).
         CREATE DATA entity TYPE HANDLE struct_descr.
         ASSIGN entity->* TO FIELD-SYMBOL(<entity>).
-      CATCH cx_sy_create_data_error INTO DATA(cx).
+      CATCH cx_sy_create_data_error INTO DATA(cx_sy_create_data_error).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_tech_exception
           EXPORTING
             textid   = /iwbep/cx_mgw_tech_exception=>internal_error
-            previous = cx.
+            previous = cx_sy_create_data_error.
     ENDTRY.
 
     " Process any orderby query options
@@ -287,7 +287,7 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
       ASSIGN entity->* TO <entity>.
       TRY.
           zcl_demo_salesorder=>get( <vbeln> )->zif_gw_methods~map_to_entity( entity ).
-        CATCH cx_root.
+        CATCH zcx_demo_bo.
       ENDTRY.
     ENDLOOP.
 

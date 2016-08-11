@@ -77,19 +77,11 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
     IF sy-subrc NE 0.
       inst-vbeln = lv_vbeln.
       DATA(class_name) = get_subclass_from_interface( 'ZIF_DEMO_SALESORDER' ).
-      TRY.
-          CREATE OBJECT inst-instance
-            TYPE (class_name)
-            EXPORTING
-              vbeln = lv_vbeln.
-          APPEND inst TO zif_demo_salesorder~instances.
-        CATCH cx_root INTO DATA(cx).
-          RAISE EXCEPTION TYPE zcx_demo_bo
-            EXPORTING
-              textid        = zcx_demo_bo=>error
-              previous      = cx
-              error_message = |{ cx->get_text( ) }|.
-      ENDTRY.
+      CREATE OBJECT inst-instance
+        TYPE (class_name)
+        EXPORTING
+          vbeln = lv_vbeln.
+      APPEND inst TO zif_demo_salesorder~instances.
     ENDIF.
     instance ?= inst-instance.
   ENDMETHOD.

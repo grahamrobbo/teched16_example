@@ -114,19 +114,11 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
     IF sy-subrc NE 0.
       inst-key = lv_key.
       DATA(class_name) = get_subclass_from_interface( 'ZIF_DEMO_SALESORDERITEM' ).
-      TRY.
-          CREATE OBJECT inst-instance
-            TYPE (class_name)
-            EXPORTING
-              key = lv_key.
-          APPEND inst TO zif_demo_salesorderitem~instances.
-        CATCH cx_root INTO DATA(cx).
-          RAISE EXCEPTION TYPE zcx_demo_bo
-            EXPORTING
-              textid        = zcx_demo_bo=>error
-              previous      = cx
-              error_message = |{ cx->get_text( ) }|.
-      ENDTRY.
+      CREATE OBJECT inst-instance
+        TYPE (class_name)
+        EXPORTING
+          key = lv_key.
+      APPEND inst TO zif_demo_salesorderitem~instances.
     ENDIF.
 
     instance ?= inst-instance.

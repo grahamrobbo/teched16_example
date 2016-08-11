@@ -92,19 +92,11 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
     IF sy-subrc NE 0.
       inst-kunnr = lv_kunnr.
       DATA(class_name) = get_subclass_from_interface( 'ZIF_DEMO_CUSTOMER' ).
-      TRY.
-          CREATE OBJECT inst-instance
-            TYPE (class_name)
-            EXPORTING
-              kunnr = lv_kunnr.
-          APPEND inst TO zif_demo_customer~instances.
-        CATCH cx_root INTO DATA(cx).
-          RAISE EXCEPTION TYPE zcx_demo_bo
-            EXPORTING
-              textid        = zcx_demo_bo=>error
-              previous      = cx
-              error_message = |{ cx->get_text( ) }|.
-      ENDTRY.
+      CREATE OBJECT inst-instance
+        TYPE (class_name)
+        EXPORTING
+          kunnr = lv_kunnr.
+      APPEND inst TO zif_demo_customer~instances.
     ENDIF.
     instance ?= inst-instance.
   ENDMETHOD.
@@ -233,12 +225,12 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
               )->zif_gw_methods~map_to_entity( entity ).
         ENDCASE.
 
-      CATCH zcx_demo_bo cx_sy_itab_line_not_found INTO DATA(zcx_demo_bo).
+      CATCH zcx_demo_bo cx_sy_itab_line_not_found INTO DATA(exception).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid   = /iwbep/cx_mgw_busi_exception=>business_error
-            previous = zcx_demo_bo
-            message  = |{ zcx_demo_bo->get_text( ) }|.
+            previous = exception
+            message  = |{ exception->get_text( ) }|.
     ENDTRY.
 
   ENDMETHOD.

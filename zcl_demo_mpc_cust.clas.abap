@@ -5,6 +5,9 @@ class ZCL_DEMO_MPC_CUST definition
   create public .
 
 public section.
+
+  methods DEFINE
+    redefinition .
 protected section.
 
   methods EXTEND_CUSTOMER
@@ -16,6 +19,14 @@ ENDCLASS.
 
 
 CLASS ZCL_DEMO_MPC_CUST IMPLEMENTATION.
+
+
+  METHOD define.
+    super->define( ).
+
+    extend_customer( ).
+
+  ENDMETHOD.
 
 
   METHOD extend_customer.

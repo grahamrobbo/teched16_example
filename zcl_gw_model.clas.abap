@@ -65,12 +65,10 @@ CLASS ZCL_GW_MODEL IMPLEMENTATION.
 
   METHOD get_abap_field_name.
 
-    DATA(property) = get_property(
+    rv_abap_field = get_property(
       iv_entity_name = iv_entity_name
       iv_field_name  = iv_field_name
-         ).
-
-    rv_abap_field = property-name.
+         )-name.
 
   ENDMETHOD.
 
@@ -79,11 +77,7 @@ CLASS ZCL_GW_MODEL IMPLEMENTATION.
 
     DATA(entities) = mpc->get_entity_types( ).
 
-    READ TABLE entities REFERENCE INTO DATA(node)
-      WITH KEY name = iv_name.
-    CHECK sy-subrc = 0.
-    rt_properties = node->properties.
-
+    rt_properties = entities[ name = iv_name ]-properties.
   ENDMETHOD.
 
 
@@ -92,7 +86,7 @@ CLASS ZCL_GW_MODEL IMPLEMENTATION.
     DATA(property) = get_property(
       iv_entity_name = iv_entity_name
       iv_field_name  = iv_field_name
-         ).
+      ).
 
     CHECK property-filterable = abap_true.
 
@@ -105,8 +99,7 @@ CLASS ZCL_GW_MODEL IMPLEMENTATION.
 
     DATA(properties) = get_entity_properties( |{ iv_entity_name }| ).
 
-    READ TABLE properties INTO rs_property
-      WITH KEY external_name = iv_field_name.
+    rs_property = properties[ external_name = iv_field_name ].
 
   ENDMETHOD.
 

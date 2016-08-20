@@ -81,19 +81,19 @@ CLASS ZCL_BO_ABSTRACT IMPLEMENTATION.
 
 METHOD get_struct_descr.
 *--------------------------------------------------------------------*
-* This method returns an instantiated CL_ABAP_STRUCTDESCR that for   *
-* a line of the passed in itab.                                      *
+* Returns instantiated CL_ABAP_STRUCTDESCR for the linetype of the   *
+* passed in itab.                                                    *
 *--------------------------------------------------------------------*
   DATA: table_descr    TYPE REF TO cl_abap_tabledescr.
 
   TRY.
       table_descr ?= cl_abap_tabledescr=>describe_by_data( data ).
       struct_descr ?= table_descr->get_table_line_type( ).
-    CATCH cx_root INTO DATA(cx_root).
+    CATCH cx_sy_move_cast_error INTO DATA(cx_sy_move_cast_error).
       RAISE EXCEPTION TYPE /iwbep/cx_mgw_tech_exception
         EXPORTING
           textid   = /iwbep/cx_mgw_tech_exception=>internal_error
-          previous = cx_root.
+          previous = cx_sy_move_cast_error.
   ENDTRY.
 ENDMETHOD.
 

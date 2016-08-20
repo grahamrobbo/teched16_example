@@ -29,22 +29,21 @@ public section.
     returning
       value(RV_ABAP_FIELD) type STRING .
   PROTECTED SECTION.
-  PRIVATE SECTION.
+private section.
 
-    DATA mpc TYPE REF TO /iwbep/if_mgw_odata_re_model .
-    DATA runtime TYPE REF TO /iwbep/if_mgw_conv_srv_runtime .
+  data MPC type ref to /IWBEP/IF_MGW_ODATA_RE_MODEL .
 
-    METHODS get_entity_properties
-      IMPORTING
-        !iv_name             TYPE /iwbep/if_mgw_med_odata_types=>ty_e_med_internal_name
-      RETURNING
-        VALUE(rt_properties) TYPE /iwbep/if_mgw_med_odata_types=>ty_t_med_properties .
-    METHODS get_property
-      IMPORTING
-        !iv_entity_name    TYPE string
-        !iv_field_name     TYPE string
-      RETURNING
-        VALUE(rs_property) TYPE /iwbep/if_mgw_med_odata_types=>ty_s_med_property .
+  methods GET_ENTITY_PROPERTIES
+    importing
+      !IV_NAME type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_INTERNAL_NAME
+    returning
+      value(RT_PROPERTIES) type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_T_MED_PROPERTIES .
+  methods GET_PROPERTY
+    importing
+      !IV_ENTITY_NAME type STRING
+      !IV_FIELD_NAME type STRING
+    returning
+      value(RS_PROPERTY) type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_S_MED_PROPERTY .
 ENDCLASS.
 
 
@@ -53,7 +52,6 @@ CLASS ZCL_GW_MODEL IMPLEMENTATION.
 
 
   METHOD constructor.
-    me->runtime = runtime.
 
     DATA: lr_facade TYPE REF TO /iwbep/cl_mgw_dp_facade.
     lr_facade ?= runtime->get_dp_facade( ).

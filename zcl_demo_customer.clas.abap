@@ -1,39 +1,39 @@
-CLASS zcl_demo_customer DEFINITION
-  PUBLIC
-  INHERITING FROM zcl_bo_abstract
-  CREATE PUBLIC .
+class ZCL_DEMO_CUSTOMER definition
+  public
+  inheriting from ZCL_BO_ABSTRACT
+  create protected .
 
-  PUBLIC SECTION.
+public section.
 
-    INTERFACES zif_gw_methods .
-    INTERFACES zif_demo_customer .
+  interfaces ZIF_DEMO_CUSTOMER .
+  interfaces ZIF_GW_METHODS .
 
-    ALIASES get
-      FOR zif_demo_customer~get .
-    ALIASES get_kunnr
-      FOR zif_demo_customer~get_kunnr .
-    ALIASES get_land1
-      FOR zif_demo_customer~get_land1 .
-    ALIASES get_land_text
-      FOR zif_demo_customer~get_land_text .
-    ALIASES get_name1
-      FOR zif_demo_customer~get_name1 .
-    ALIASES get_ort01
-      FOR zif_demo_customer~get_ort01 .
-    ALIASES get_pstlz
-      FOR zif_demo_customer~get_pstlz .
-    ALIASES get_regio
-      FOR zif_demo_customer~get_regio .
-    ALIASES get_region_text
-      FOR zif_demo_customer~get_region_text .
-    ALIASES get_stras
-      FOR zif_demo_customer~get_stras .
+  aliases GET
+    for ZIF_DEMO_CUSTOMER~GET .
+  aliases GET_KUNNR
+    for ZIF_DEMO_CUSTOMER~GET_KUNNR .
+  aliases GET_LAND1
+    for ZIF_DEMO_CUSTOMER~GET_LAND1 .
+  aliases GET_LAND_TEXT
+    for ZIF_DEMO_CUSTOMER~GET_LAND_TEXT .
+  aliases GET_NAME1
+    for ZIF_DEMO_CUSTOMER~GET_NAME1 .
+  aliases GET_ORT01
+    for ZIF_DEMO_CUSTOMER~GET_ORT01 .
+  aliases GET_PSTLZ
+    for ZIF_DEMO_CUSTOMER~GET_PSTLZ .
+  aliases GET_REGIO
+    for ZIF_DEMO_CUSTOMER~GET_REGIO .
+  aliases GET_REGION_TEXT
+    for ZIF_DEMO_CUSTOMER~GET_REGION_TEXT .
+  aliases GET_STRAS
+    for ZIF_DEMO_CUSTOMER~GET_STRAS .
 
-    METHODS constructor
-      IMPORTING
-        !kunnr TYPE kunnr
-      RAISING
-        zcx_demo_bo .
+  methods CONSTRUCTOR
+    importing
+      !KUNNR type KUNNR
+    raising
+      ZCX_DEMO_BO .
   PROTECTED SECTION.
 
     CLASS-DATA countries TYPE isi_country_help_tt .
@@ -264,7 +264,7 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid  = /iwbep/cx_mgw_busi_exception=>business_error
-            message = |$orderby { order->property } not supported|.
+            message = |Order parameter '{ order->property }' is not supported|.
       ENDIF.
       orderby_clause = orderby_clause &&
         |{ abap_field } { order->order CASE = UPPER }ENDING |.
@@ -334,12 +334,12 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
             EXIT.
           ENDIF.
         ENDSELECT.
-      CATCH cx_sy_dynamic_osql_syntax INTO DATA(cx_sy_dynamic_osql_syntax).
+      CATCH cx_sy_dynamic_osql_error INTO DATA(cx_sy_dynamic_osql_error).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid   = /iwbep/cx_mgw_busi_exception=>business_error
-            previous = cx_sy_dynamic_osql_syntax
-            message  = |{ cx_sy_dynamic_osql_syntax->get_text( ) }|.
+            previous = cx_sy_dynamic_osql_error
+            message  = |{ cx_sy_dynamic_osql_error->get_text( ) }|.
     ENDTRY.
 
     CHECK io_tech_request_context->has_count( ) NE abap_true.

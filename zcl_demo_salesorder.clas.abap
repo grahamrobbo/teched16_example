@@ -1,27 +1,27 @@
-CLASS zcl_demo_salesorder DEFINITION
-  PUBLIC
-  INHERITING FROM zcl_bo_abstract
-  CREATE PUBLIC .
+class ZCL_DEMO_SALESORDER definition
+  public
+  inheriting from ZCL_BO_ABSTRACT
+  create protected .
 
-  PUBLIC SECTION.
+public section.
 
-    INTERFACES zif_gw_methods .
-    INTERFACES zif_demo_salesorder .
+  interfaces ZIF_DEMO_SALESORDER .
+  interfaces ZIF_GW_METHODS .
 
-    ALIASES get
-      FOR zif_demo_salesorder~get .
-    ALIASES get_audat
-      FOR zif_demo_salesorder~get_audat .
-    ALIASES get_kunnr
-      FOR zif_demo_salesorder~get_kunnr .
-    ALIASES get_vbeln
-      FOR zif_demo_salesorder~get_vbeln .
+  aliases GET
+    for ZIF_DEMO_SALESORDER~GET .
+  aliases GET_AUDAT
+    for ZIF_DEMO_SALESORDER~GET_AUDAT .
+  aliases GET_KUNNR
+    for ZIF_DEMO_SALESORDER~GET_KUNNR .
+  aliases GET_VBELN
+    for ZIF_DEMO_SALESORDER~GET_VBELN .
 
-    METHODS constructor
-      IMPORTING
-        !vbeln TYPE vbeln
-      RAISING
-        zcx_demo_bo .
+  methods CONSTRUCTOR
+    importing
+      !VBELN type VBELN
+    raising
+      ZCX_DEMO_BO .
   PROTECTED SECTION.
 
     METHODS load_salesorder_data

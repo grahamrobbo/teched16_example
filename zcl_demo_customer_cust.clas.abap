@@ -2,7 +2,9 @@ class ZCL_DEMO_CUSTOMER_CUST definition
   public
   inheriting from ZCL_DEMO_CUSTOMER
   final
-  create public .
+  create protected
+
+  global friends ZCL_DEMO_CUSTOMER .
 
 public section.
 

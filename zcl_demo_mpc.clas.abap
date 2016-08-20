@@ -326,7 +326,7 @@ lo_property->set_sortable( abap_true ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_true ).
 lo_property = lo_entity_type->create_property( iv_property_name = 'SalesOrderDate' iv_abap_fieldname = 'AUDAT' ). "#EC NOTEXT
-lo_property->set_type_edm_datetime( ).
+lo_property->set_type_edm_datetimeoffset( ).
 lo_property->set_precison( iv_precision = 7 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
@@ -501,7 +501,7 @@ lo_entity_set->set_filter_required( abap_true ).
 *&---------------------------------------------------------------------*
 
 
-  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20160810053519'.                  "#EC NOTEXT
+  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20160820001411'.                  "#EC NOTEXT
   rv_last_modified = super->get_last_modified( ).
   IF rv_last_modified LT lc_gen_date_time.
     rv_last_modified = lc_gen_date_time.

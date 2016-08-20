@@ -1,41 +1,41 @@
-CLASS zcl_demo_salesorderitem DEFINITION
-  PUBLIC
-  INHERITING FROM zcl_bo_abstract
-  CREATE PUBLIC .
+class ZCL_DEMO_SALESORDERITEM definition
+  public
+  inheriting from ZCL_BO_ABSTRACT
+  create protected .
 
-  PUBLIC SECTION.
+public section.
 
-    INTERFACES zif_demo_salesorderitem .
-    INTERFACES zif_gw_methods .
+  interfaces ZIF_DEMO_SALESORDERITEM .
+  interfaces ZIF_GW_METHODS .
 
-    ALIASES get
-      FOR zif_demo_salesorderitem~get .
-    ALIASES get_arktx
-      FOR zif_demo_salesorderitem~get_arktx .
-    ALIASES get_matnr
-      FOR zif_demo_salesorderitem~get_matnr .
-    ALIASES get_mseht
-      FOR zif_demo_salesorderitem~get_mseht .
-    ALIASES get_netwr
-      FOR zif_demo_salesorderitem~get_netwr .
-    ALIASES get_posnr
-      FOR zif_demo_salesorderitem~get_posnr .
-    ALIASES get_vbeln
-      FOR zif_demo_salesorderitem~get_vbeln .
-    ALIASES get_waerk
-      FOR zif_demo_salesorderitem~get_waerk .
-    ALIASES get_waerk_txt
-      FOR zif_demo_salesorderitem~get_waerk_txt .
-    ALIASES get_zieme
-      FOR zif_demo_salesorderitem~get_zieme .
-    ALIASES get_zmeng
-      FOR zif_demo_salesorderitem~get_zmeng .
+  aliases GET
+    for ZIF_DEMO_SALESORDERITEM~GET .
+  aliases GET_ARKTX
+    for ZIF_DEMO_SALESORDERITEM~GET_ARKTX .
+  aliases GET_MATNR
+    for ZIF_DEMO_SALESORDERITEM~GET_MATNR .
+  aliases GET_MSEHT
+    for ZIF_DEMO_SALESORDERITEM~GET_MSEHT .
+  aliases GET_NETWR
+    for ZIF_DEMO_SALESORDERITEM~GET_NETWR .
+  aliases GET_POSNR
+    for ZIF_DEMO_SALESORDERITEM~GET_POSNR .
+  aliases GET_VBELN
+    for ZIF_DEMO_SALESORDERITEM~GET_VBELN .
+  aliases GET_WAERK
+    for ZIF_DEMO_SALESORDERITEM~GET_WAERK .
+  aliases GET_WAERK_TXT
+    for ZIF_DEMO_SALESORDERITEM~GET_WAERK_TXT .
+  aliases GET_ZIEME
+    for ZIF_DEMO_SALESORDERITEM~GET_ZIEME .
+  aliases GET_ZMENG
+    for ZIF_DEMO_SALESORDERITEM~GET_ZMENG .
 
-    METHODS constructor
-      IMPORTING
-        !key TYPE zif_demo_salesorderitem=>key
-      RAISING
-        zcx_demo_bo .
+  methods CONSTRUCTOR
+    importing
+      !KEY type ZIF_DEMO_SALESORDERITEM=>KEY
+    raising
+      ZCX_DEMO_BO .
   PROTECTED SECTION.
 
     TYPES:

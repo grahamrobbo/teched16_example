@@ -24,7 +24,7 @@ CLASS ZCL_DEMO_MPC_CUST IMPLEMENTATION.
   METHOD define.
     super->define( ).
 
-    extend_customer( ).
+    "extend_customer( ).
 
   ENDMETHOD.
 

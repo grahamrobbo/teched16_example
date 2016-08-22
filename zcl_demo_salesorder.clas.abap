@@ -212,6 +212,9 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
         WHEN 'VBELN'.
           DATA(vbeln_range) = option->select_options.
           where_clause = |{ where_clause } & VBELN IN VBELN_RANGE|.
+        WHEN 'AUDAT'.
+          DATA(audat_range) = option->select_options.
+          where_clause = |{ where_clause } & AUDAT IN AUDAT_RANGE|.
         WHEN OTHERS.
           RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
             EXPORTING

@@ -332,7 +332,7 @@ lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_true ).
 lo_property->set_nullable( abap_true ).
-lo_property->set_filterable( abap_false ).
+lo_property->set_filterable( abap_true ).
 
 lo_entity_type->bind_structure( iv_structure_name   = 'ZDEMO_SALESORDER'
                                 iv_bind_conversions = 'X' ). "#EC NOTEXT
@@ -501,7 +501,7 @@ lo_entity_set->set_filter_required( abap_true ).
 *&---------------------------------------------------------------------*
 
 
-  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20160820001411'.                  "#EC NOTEXT
+  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20160822054349'.                  "#EC NOTEXT
   rv_last_modified = super->get_last_modified( ).
   IF rv_last_modified LT lc_gen_date_time.
     rv_last_modified = lc_gen_date_time.

@@ -296,6 +296,7 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
           es_response_context-inlinecount = lines( osreftab ).
         ENDIF.
 
+        " Fill entities
         DATA: item TYPE REF TO zif_demo_salesorderitem.
         LOOP AT osreftab INTO DATA(osref).
           item ?= osref.

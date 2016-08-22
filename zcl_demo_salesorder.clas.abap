@@ -186,7 +186,7 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
             previous = cx_sy_create_data_error.
     ENDTRY.
 
-    " Process any orderby query options
+    " $orderby query options
     DATA: orderby_clause TYPE string.
     LOOP AT it_order REFERENCE INTO DATA(order).
       DATA(abap_field) = io_model->get_sortable_abap_field_name(
@@ -202,7 +202,7 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
         |{ abap_field } { order->order CASE = UPPER }ENDING |.
     ENDLOOP.
 
-*     Process any filterby query options
+    " $filterby query options
     DATA: where_clause   TYPE string.
     LOOP AT it_filter_select_options REFERENCE INTO DATA(option).
       abap_field = io_model->get_filterable_abap_field_name(
@@ -241,6 +241,7 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
     REPLACE ALL OCCURRENCES OF '&' IN where_clause WITH 'AND'.
 
     TRY.
+        " $inlinecount=allpages
         IF io_tech_request_context->has_inlinecount( ) = abap_true.
           DATA dbcount TYPE int4 .
           SELECT COUNT(*)
@@ -250,7 +251,7 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
           es_response_context-inlinecount = dbcount.
         ENDIF.
 
-        " Just get primary keys
+        " Get primary keys
         SELECT vbeln
           INTO CORRESPONDING FIELDS OF <entity>
           FROM vbak
@@ -270,7 +271,31 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
             message  = |{ cx_sy_dynamic_osql_syntax->get_text( ) }|.
     ENDTRY.
 
+    " $count
     CHECK io_tech_request_context->has_count( ) NE abap_true.
+
+    " $skiptoken
+    CONSTANTS: max_page_size TYPE i VALUE 50.
+    DATA: index_start TYPE i,
+          index_end   TYPE i.
+
+    IF lines( <entityset> ) > max_page_size.
+      index_start = io_tech_request_context->get_skiptoken( ).
+      IF index_start = 0. index_start = 1. ENDIF.
+      index_end = index_start + max_page_size - 1.
+      LOOP AT <entityset> REFERENCE INTO entity.
+        IF index_start > 1.
+          DELETE <entityset>.
+          SUBTRACT 1 FROM index_start.
+          CONTINUE.
+        ENDIF.
+        CHECK sy-tabix > max_page_size.
+        DELETE <entityset>.
+      ENDLOOP.
+      IF lines( <entityset> ) = max_page_size.
+        es_response_context-skiptoken = index_end + 1.
+      ENDIF.
+    ENDIF.
 
     " Fill entities
     LOOP AT <entityset> REFERENCE INTO entity.

@@ -91,7 +91,7 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
       WITH KEY kunnr = lv_kunnr.
     IF sy-subrc NE 0.
       inst-kunnr = lv_kunnr.
-      DATA(class_name) = get_subclass_from_interface( 'ZIF_DEMO_CUSTOMER' ).
+      DATA(class_name) = get_subclass( 'ZCL_DEMO_CUSTOMER' ).
       CREATE OBJECT inst-instance
         TYPE (class_name)
         EXPORTING

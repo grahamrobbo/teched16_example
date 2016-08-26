@@ -113,7 +113,7 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
 
     IF sy-subrc NE 0.
       inst-key = lv_key.
-      DATA(class_name) = get_subclass_from_interface( 'ZIF_DEMO_SALESORDERITEM' ).
+      DATA(class_name) = get_subclass( 'ZCL_DEMO_SALESORDERITEM' ).
       CREATE OBJECT inst-instance
         TYPE (class_name)
         EXPORTING

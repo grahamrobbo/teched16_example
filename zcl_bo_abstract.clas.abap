@@ -18,7 +18,7 @@ protected section.
       !BAPIRETURN type BAPIRET2TAB optional
     raising
       ZCX_DEMO_BO .
-  class-methods GET_SUBCLASS_FROM_INTERFACE
+  class-methods GET_SUBCLASS
     importing
       !CLSNAME_IN type SEOCLSNAME
     returning
@@ -98,7 +98,7 @@ METHOD get_struct_descr.
 ENDMETHOD.
 
 
-METHOD get_subclass_from_interface.
+METHOD GET_SUBCLASS.
 *--------------------------------------------------------------------*
 * This method walks down the inheritance tree and returns the name   *
 * of the last child.                                                 *

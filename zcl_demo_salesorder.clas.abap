@@ -76,7 +76,7 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
       WITH KEY vbeln = lv_vbeln.
     IF sy-subrc NE 0.
       inst-vbeln = lv_vbeln.
-      DATA(class_name) = get_subclass_from_interface( 'ZIF_DEMO_SALESORDER' ).
+      DATA(class_name) = get_subclass( 'ZCL_DEMO_SALESORDER' ).
       CREATE OBJECT inst-instance
         TYPE (class_name)
         EXPORTING

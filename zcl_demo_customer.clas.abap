@@ -1,39 +1,39 @@
-class ZCL_DEMO_CUSTOMER definition
-  public
-  inheriting from ZCL_BO_ABSTRACT
-  create protected .
+CLASS zcl_demo_customer DEFINITION
+  PUBLIC
+  INHERITING FROM zcl_bo_abstract
+  CREATE PROTECTED .
 
-public section.
+  PUBLIC SECTION.
 
-  interfaces ZIF_DEMO_CUSTOMER .
-  interfaces ZIF_GW_METHODS .
+    INTERFACES zif_demo_customer .
+    INTERFACES zif_gw_methods .
 
-  aliases GET
-    for ZIF_DEMO_CUSTOMER~GET .
-  aliases GET_KUNNR
-    for ZIF_DEMO_CUSTOMER~GET_KUNNR .
-  aliases GET_LAND1
-    for ZIF_DEMO_CUSTOMER~GET_LAND1 .
-  aliases GET_LAND_TEXT
-    for ZIF_DEMO_CUSTOMER~GET_LAND_TEXT .
-  aliases GET_NAME1
-    for ZIF_DEMO_CUSTOMER~GET_NAME1 .
-  aliases GET_ORT01
-    for ZIF_DEMO_CUSTOMER~GET_ORT01 .
-  aliases GET_PSTLZ
-    for ZIF_DEMO_CUSTOMER~GET_PSTLZ .
-  aliases GET_REGIO
-    for ZIF_DEMO_CUSTOMER~GET_REGIO .
-  aliases GET_REGION_TEXT
-    for ZIF_DEMO_CUSTOMER~GET_REGION_TEXT .
-  aliases GET_STRAS
-    for ZIF_DEMO_CUSTOMER~GET_STRAS .
+    ALIASES get
+      FOR zif_demo_customer~get .
+    ALIASES get_kunnr
+      FOR zif_demo_customer~get_kunnr .
+    ALIASES get_land1
+      FOR zif_demo_customer~get_land1 .
+    ALIASES get_land_text
+      FOR zif_demo_customer~get_land_text .
+    ALIASES get_name1
+      FOR zif_demo_customer~get_name1 .
+    ALIASES get_ort01
+      FOR zif_demo_customer~get_ort01 .
+    ALIASES get_pstlz
+      FOR zif_demo_customer~get_pstlz .
+    ALIASES get_regio
+      FOR zif_demo_customer~get_regio .
+    ALIASES get_region_text
+      FOR zif_demo_customer~get_region_text .
+    ALIASES get_stras
+      FOR zif_demo_customer~get_stras .
 
-  methods CONSTRUCTOR
-    importing
-      !KUNNR type KUNNR
-    raising
-      ZCX_DEMO_BO .
+    METHODS constructor
+      IMPORTING
+        !kunnr TYPE kunnr
+      RAISING
+        zcx_demo_bo .
   PROTECTED SECTION.
 
     CLASS-DATA countries TYPE isi_country_help_tt .
@@ -86,19 +86,20 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
       IMPORTING
         output = lv_kunnr.
 
-    READ TABLE zif_demo_customer~instances
-      INTO DATA(inst)
-      WITH KEY kunnr = lv_kunnr.
-    IF sy-subrc NE 0.
-      inst-kunnr = lv_kunnr.
-      DATA(class_name) = get_subclass( 'ZCL_DEMO_CUSTOMER' ).
-      CREATE OBJECT inst-instance
-        TYPE (class_name)
-        EXPORTING
-          kunnr = lv_kunnr.
-      APPEND inst TO zif_demo_customer~instances.
-    ENDIF.
+    TRY.
+        DATA(inst) = zif_demo_customer~instances[ kunnr = lv_kunnr ].
+      CATCH cx_sy_itab_line_not_found.
+        inst-kunnr = lv_kunnr.
+        DATA(class_name) = get_subclass( 'ZCL_DEMO_CUSTOMER' ).
+        CREATE OBJECT inst-instance
+          TYPE (class_name)
+          EXPORTING
+            kunnr = inst-kunnr.
+        APPEND inst TO zif_demo_customer~instances.
+    ENDTRY.
+
     instance ?= inst-instance.
+
   ENDMETHOD.
 
 
@@ -176,12 +177,12 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method ZIF_GW_METHODS~CREATE_DEEP_ENTITY.
+  METHOD zif_gw_methods~create_deep_entity.
     RAISE EXCEPTION TYPE /iwbep/cx_mgw_not_impl_exc
       EXPORTING
         textid = /iwbep/cx_mgw_not_impl_exc=>method_not_implemented
         method = 'ZIF_GW_METHODS~CREATE_DEEP_ENTITY'.
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD zif_gw_methods~create_entity.
@@ -210,7 +211,6 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
 
   METHOD zif_gw_methods~get_entity.
 
-    GET REFERENCE OF er_entity INTO DATA(entity).
     TRY.
         CASE iv_source_name.
           WHEN 'SalesOrder'.
@@ -218,11 +218,11 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
               |{ zcl_demo_salesorder=>get(
                 |{ it_key_tab[ name = 'SalesOrderId' ]-value }|
                 )->get_kunnr( ) }|
-              )->zif_gw_methods~map_to_entity( entity ).
+              )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
           WHEN OTHERS.
             zcl_demo_customer=>get(
               |{ it_key_tab[ name = 'CustomerId' ]-value }|
-              )->zif_gw_methods~map_to_entity( entity ).
+              )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
         ENDCASE.
 
       CATCH zcx_demo_bo cx_sy_itab_line_not_found INTO DATA(exception).
@@ -359,10 +359,10 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
         IF index_start > 1.
           DELETE <entityset>.
           SUBTRACT 1 FROM index_start.
-          CONTINUE.
+        ELSE.
+          CHECK sy-tabix > max_page_size.
+          DELETE <entityset>.
         ENDIF.
-        CHECK sy-tabix > max_page_size.
-        DELETE <entityset>.
       ENDLOOP.
       IF lines( <entityset> ) = max_page_size.
         es_response_context-skiptoken = index_end + 1.

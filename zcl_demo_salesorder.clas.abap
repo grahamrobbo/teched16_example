@@ -1,27 +1,27 @@
-class ZCL_DEMO_SALESORDER definition
-  public
-  inheriting from ZCL_BO_ABSTRACT
-  create protected .
+CLASS zcl_demo_salesorder DEFINITION
+  PUBLIC
+  INHERITING FROM zcl_bo_abstract
+  CREATE PROTECTED .
 
-public section.
+  PUBLIC SECTION.
 
-  interfaces ZIF_DEMO_SALESORDER .
-  interfaces ZIF_GW_METHODS .
+    INTERFACES zif_demo_salesorder .
+    INTERFACES zif_gw_methods .
 
-  aliases GET
-    for ZIF_DEMO_SALESORDER~GET .
-  aliases GET_AUDAT
-    for ZIF_DEMO_SALESORDER~GET_AUDAT .
-  aliases GET_KUNNR
-    for ZIF_DEMO_SALESORDER~GET_KUNNR .
-  aliases GET_VBELN
-    for ZIF_DEMO_SALESORDER~GET_VBELN .
+    ALIASES get
+      FOR zif_demo_salesorder~get .
+    ALIASES get_audat
+      FOR zif_demo_salesorder~get_audat .
+    ALIASES get_kunnr
+      FOR zif_demo_salesorder~get_kunnr .
+    ALIASES get_vbeln
+      FOR zif_demo_salesorder~get_vbeln .
 
-  methods CONSTRUCTOR
-    importing
-      !VBELN type VBELN
-    raising
-      ZCX_DEMO_BO .
+    METHODS constructor
+      IMPORTING
+        !vbeln TYPE vbeln
+      RAISING
+        zcx_demo_bo .
   PROTECTED SECTION.
 
     METHODS load_salesorder_data
@@ -71,18 +71,18 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
       IMPORTING
         output = lv_vbeln.
 
-    READ TABLE zif_demo_salesorder~instances
-      INTO DATA(inst)
-      WITH KEY vbeln = lv_vbeln.
-    IF sy-subrc NE 0.
-      inst-vbeln = lv_vbeln.
-      DATA(class_name) = get_subclass( 'ZCL_DEMO_SALESORDER' ).
-      CREATE OBJECT inst-instance
-        TYPE (class_name)
-        EXPORTING
-          vbeln = lv_vbeln.
-      APPEND inst TO zif_demo_salesorder~instances.
-    ENDIF.
+    TRY.
+        DATA(inst) = zif_demo_salesorder~instances[ vbeln = lv_vbeln ].
+      CATCH cx_sy_itab_line_not_found.
+        inst-vbeln = lv_vbeln.
+        DATA(class_name) = get_subclass( 'ZCL_DEMO_SALESORDER' ).
+        CREATE OBJECT inst-instance
+          TYPE (class_name)
+          EXPORTING
+            vbeln = inst-vbeln.
+        APPEND inst TO zif_demo_salesorder~instances.
+    ENDTRY.
+
     instance ?= inst-instance.
   ENDMETHOD.
 
@@ -144,12 +144,12 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method ZIF_GW_METHODS~EXECUTE_ACTION.
+  METHOD zif_gw_methods~execute_action.
     RAISE EXCEPTION TYPE /iwbep/cx_mgw_not_impl_exc
       EXPORTING
         textid = /iwbep/cx_mgw_not_impl_exc=>method_not_implemented
         method = 'ZIF_GW_METHODS~EXECUTE_ACTION'.
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD zif_gw_methods~get_entity.
@@ -290,10 +290,10 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
         IF index_start > 1.
           DELETE <entityset>.
           SUBTRACT 1 FROM index_start.
-          CONTINUE.
+        ELSE.
+          CHECK sy-tabix > max_page_size.
+          DELETE <entityset>.
         ENDIF.
-        CHECK sy-tabix > max_page_size.
-        DELETE <entityset>.
       ENDLOOP.
       IF lines( <entityset> ) = max_page_size.
         es_response_context-skiptoken = index_end + 1.

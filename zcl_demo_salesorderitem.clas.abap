@@ -1,41 +1,41 @@
-class ZCL_DEMO_SALESORDERITEM definition
-  public
-  inheriting from ZCL_BO_ABSTRACT
-  create protected .
+CLASS zcl_demo_salesorderitem DEFINITION
+  PUBLIC
+  INHERITING FROM zcl_bo_abstract
+  CREATE PROTECTED .
 
-public section.
+  PUBLIC SECTION.
 
-  interfaces ZIF_DEMO_SALESORDERITEM .
-  interfaces ZIF_GW_METHODS .
+    INTERFACES zif_demo_salesorderitem .
+    INTERFACES zif_gw_methods .
 
-  aliases GET
-    for ZIF_DEMO_SALESORDERITEM~GET .
-  aliases GET_ARKTX
-    for ZIF_DEMO_SALESORDERITEM~GET_ARKTX .
-  aliases GET_MATNR
-    for ZIF_DEMO_SALESORDERITEM~GET_MATNR .
-  aliases GET_MSEHT
-    for ZIF_DEMO_SALESORDERITEM~GET_MSEHT .
-  aliases GET_NETWR
-    for ZIF_DEMO_SALESORDERITEM~GET_NETWR .
-  aliases GET_POSNR
-    for ZIF_DEMO_SALESORDERITEM~GET_POSNR .
-  aliases GET_VBELN
-    for ZIF_DEMO_SALESORDERITEM~GET_VBELN .
-  aliases GET_WAERK
-    for ZIF_DEMO_SALESORDERITEM~GET_WAERK .
-  aliases GET_WAERK_TXT
-    for ZIF_DEMO_SALESORDERITEM~GET_WAERK_TXT .
-  aliases GET_ZIEME
-    for ZIF_DEMO_SALESORDERITEM~GET_ZIEME .
-  aliases GET_ZMENG
-    for ZIF_DEMO_SALESORDERITEM~GET_ZMENG .
+    ALIASES get
+      FOR zif_demo_salesorderitem~get .
+    ALIASES get_arktx
+      FOR zif_demo_salesorderitem~get_arktx .
+    ALIASES get_matnr
+      FOR zif_demo_salesorderitem~get_matnr .
+    ALIASES get_mseht
+      FOR zif_demo_salesorderitem~get_mseht .
+    ALIASES get_netwr
+      FOR zif_demo_salesorderitem~get_netwr .
+    ALIASES get_posnr
+      FOR zif_demo_salesorderitem~get_posnr .
+    ALIASES get_vbeln
+      FOR zif_demo_salesorderitem~get_vbeln .
+    ALIASES get_waerk
+      FOR zif_demo_salesorderitem~get_waerk .
+    ALIASES get_waerk_txt
+      FOR zif_demo_salesorderitem~get_waerk_txt .
+    ALIASES get_zieme
+      FOR zif_demo_salesorderitem~get_zieme .
+    ALIASES get_zmeng
+      FOR zif_demo_salesorderitem~get_zmeng .
 
-  methods CONSTRUCTOR
-    importing
-      !KEY type ZIF_DEMO_SALESORDERITEM=>KEY
-    raising
-      ZCX_DEMO_BO .
+    METHODS constructor
+      IMPORTING
+        !key TYPE zif_demo_salesorderitem=>key
+      RAISING
+        zcx_demo_bo .
   PROTECTED SECTION.
 
     TYPES:
@@ -107,19 +107,17 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
       IMPORTING
         output = lv_key-posnr.
 
-    READ TABLE zif_demo_salesorderitem~instances
-      INTO DATA(inst)
-      WITH KEY key = lv_key.
-
-    IF sy-subrc NE 0.
-      inst-key = lv_key.
-      DATA(class_name) = get_subclass( 'ZCL_DEMO_SALESORDERITEM' ).
-      CREATE OBJECT inst-instance
-        TYPE (class_name)
-        EXPORTING
-          key = lv_key.
-      APPEND inst TO zif_demo_salesorderitem~instances.
-    ENDIF.
+    TRY.
+        DATA(inst) = zif_demo_salesorderitem~instances[ key = lv_key ].
+      CATCH cx_sy_itab_line_not_found.
+        inst-key = lv_key.
+        DATA(class_name) = get_subclass( 'ZCL_DEMO_SALESORDERITEM' ).
+        CREATE OBJECT inst-instance
+          TYPE (class_name)
+          EXPORTING
+            key = inst-key.
+        APPEND inst TO zif_demo_salesorderitem~instances.
+    ENDTRY.
 
     instance ?= inst-instance.
 
@@ -137,12 +135,10 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
 
 
   METHOD zif_demo_salesorderitem~get_mseht.
-    " Simple example of handling lazy loading with recursion
-    IF zif_demo_salesorderitem~item_data-mseht IS INITIAL.
-      READ TABLE uom_texts
-        REFERENCE INTO DATA(uom_text)
-        WITH KEY msehi = zif_demo_salesorderitem~item_data-zieme.
-      IF sy-subrc NE 0.
+
+    TRY.
+        mseht = uom_texts[ msehi = zif_demo_salesorderitem~item_data-zieme ]-mseht.
+      CATCH cx_sy_itab_line_not_found.
         SELECT *
           FROM t006a
           APPENDING CORRESPONDING FIELDS OF TABLE uom_texts
@@ -151,13 +147,9 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
         IF sy-subrc NE 0.
           APPEND VALUE #( msehi = zif_demo_salesorderitem~item_data-zieme mseht = 'N/A' ) TO uom_texts.
         ENDIF.
-      ELSE.
-        zif_demo_salesorderitem~item_data-mseht = uom_text->mseht.
-      ENDIF.
-      mseht = zif_demo_salesorderitem~get_mseht( ).
-    ELSE.
-      mseht = zif_demo_salesorderitem~item_data-mseht.
-    ENDIF.
+        mseht = uom_texts[ msehi = zif_demo_salesorderitem~item_data-zieme ]-mseht.
+    ENDTRY.
+
   ENDMETHOD.
 
 
@@ -182,12 +174,10 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
 
 
   METHOD zif_demo_salesorderitem~get_waerk_txt.
-    " Simple example of handling lazy loading with recursion
-    IF zif_demo_salesorderitem~item_data-waerk_txt IS INITIAL.
-      READ TABLE currency_texts
-        REFERENCE INTO DATA(currency_text)
-        WITH KEY waers = zif_demo_salesorderitem~item_data-waerk.
-      IF sy-subrc NE 0.
+
+    TRY.
+        waerk_txt = currency_texts[ waers = zif_demo_salesorderitem~item_data-waerk ]-ltext.
+      CATCH cx_sy_itab_line_not_found.
         SELECT *
           FROM tcurt
           APPENDING CORRESPONDING FIELDS OF TABLE currency_texts
@@ -196,13 +186,9 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
         IF sy-subrc NE 0.
           APPEND VALUE #( waers = zif_demo_salesorderitem~item_data-waerk ltext = 'N/A' ) TO currency_texts.
         ENDIF.
-      ELSE.
-        zif_demo_salesorderitem~item_data-waerk_txt = currency_text->ltext.
-      ENDIF.
-      waerk_txt = zif_demo_salesorderitem~get_waerk_txt( ).
-    ELSE.
-      waerk_txt = zif_demo_salesorderitem~item_data-waerk_txt.
-    ENDIF.
+        waerk_txt = currency_texts[ waers = zif_demo_salesorderitem~item_data-waerk ]-ltext.
+    ENDTRY.
+
   ENDMETHOD.
 
 
@@ -216,12 +202,12 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
   ENDMETHOD.
 
 
-  method ZIF_GW_METHODS~CREATE_DEEP_ENTITY.
+  METHOD zif_gw_methods~create_deep_entity.
     RAISE EXCEPTION TYPE /iwbep/cx_mgw_not_impl_exc
       EXPORTING
         textid = /iwbep/cx_mgw_not_impl_exc=>method_not_implemented
         method = 'ZIF_GW_METHODS~CREATE_DEEP_ENTITY'.
-  endmethod.
+  ENDMETHOD.
 
 
   METHOD zif_gw_methods~create_entity.
@@ -249,14 +235,13 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
 
 
   METHOD zif_gw_methods~get_entity.
-    GET REFERENCE OF er_entity INTO DATA(entity).
 
     TRY.
         zcl_demo_salesorderitem=>get(
           VALUE #(
             vbeln = it_key_tab[ name = 'SalesOrderId' ]-value
             posnr = it_key_tab[ name = 'ItemNo' ]-value )
-            )->zif_gw_methods~map_to_entity( entity ).
+            )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
 
       CATCH cx_root INTO DATA(cx_root).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception

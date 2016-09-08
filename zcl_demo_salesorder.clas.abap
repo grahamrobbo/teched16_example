@@ -229,7 +229,7 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
     CASE iv_source_name.
       WHEN 'Customer'.
         TRY.
-            where_clause = |{ where_clause } & KUNNR = '{ it_key_tab[ name = 'CustomerId' ]-value }'|.
+            where_clause = |{ where_clause } & KUNNR = '{ zcl_demo_customer=>get( |{ it_key_tab[ name = 'CustomerId' ]-value }| )->get_kunnr( ) }'|.
           CATCH cx_sy_itab_line_not_found INTO DATA(cx_sy_itab_line_not_found).
             RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
               EXPORTING

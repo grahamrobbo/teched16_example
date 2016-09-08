@@ -84,7 +84,7 @@
        <FLAG_COM/>
        <FLAG_CORR/>
        <STATUS>R</STATUS>
-       <VERSION>0002</VERSION>
+       <VERSION>0004</VERSION>
        <LENGTH>255</LENGTH>
        <TEXT>&amp;ERROR_MESSAGE&amp;</TEXT>
       </SOTR_TEXT>
@@ -128,7 +128,7 @@
        <FLAG_COM/>
        <FLAG_CORR/>
        <STATUS>R</STATUS>
-       <VERSION>0002</VERSION>
+       <VERSION>0004</VERSION>
        <LENGTH>255</LENGTH>
        <TEXT>You are not authorised to perform this function</TEXT>
       </SOTR_TEXT>
@@ -172,7 +172,7 @@
        <FLAG_COM/>
        <FLAG_CORR/>
        <STATUS>R</STATUS>
-       <VERSION>0002</VERSION>
+       <VERSION>0004</VERSION>
        <LENGTH>255</LENGTH>
        <TEXT>&amp;BO_TYPE&amp; &apos;&amp;BO_ID&amp;&apos; not found</TEXT>
       </SOTR_TEXT>

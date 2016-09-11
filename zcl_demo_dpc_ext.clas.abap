@@ -1,32 +1,32 @@
-class ZCL_DEMO_DPC_EXT definition
-  public
-  inheriting from ZCL_DEMO_DPC
-  create public .
+CLASS zcl_demo_dpc_ext DEFINITION
+  PUBLIC
+  INHERITING FROM zcl_demo_dpc
+  CREATE PUBLIC .
 
-public section.
-protected section.
+  PUBLIC SECTION.
+  PROTECTED SECTION.
 
-  data MODEL type ref to ZCL_GW_MODEL .
+    DATA model TYPE REF TO zcl_gw_model .
 
-  methods GET_MODEL
-    returning
-      value(MODEL) type ref to ZCL_GW_MODEL
-    raising
-      /IWBEP/CX_MGW_TECH_EXCEPTION .
+    METHODS get_model
+      RETURNING
+        VALUE(model) TYPE REF TO zcl_gw_model
+      RAISING
+        /iwbep/cx_mgw_tech_exception .
 
-  methods CUSTOMERS_GET_ENTITY
-    redefinition .
-  methods CUSTOMERS_GET_ENTITYSET
-    redefinition .
-  methods SALESORDERITEMS_GET_ENTITYSET
-    redefinition .
-  methods SALESORDERS_GET_ENTITY
-    redefinition .
-  methods SALESORDERS_GET_ENTITYSET
-    redefinition .
-  methods SALESORDERITEMS_GET_ENTITY
-    redefinition .
-private section.
+    METHODS customers_get_entity
+         REDEFINITION .
+    METHODS customers_get_entityset
+         REDEFINITION .
+    METHODS salesorderitems_get_entityset
+         REDEFINITION .
+    METHODS salesorders_get_entity
+         REDEFINITION .
+    METHODS salesorders_get_entityset
+         REDEFINITION .
+    METHODS salesorderitems_get_entity
+         REDEFINITION .
+  PRIVATE SECTION.
 ENDCLASS.
 
 
@@ -48,12 +48,11 @@ CLASS ZCL_DEMO_DPC_EXT IMPLEMENTATION.
         io_message_container    = mo_context->get_message_container( )
       IMPORTING
         er_entity               = er_entity
-        es_response_context     = es_response_context
-           ).
+        es_response_context     = es_response_context ).
   ENDMETHOD.
 
 
-  method CUSTOMERS_GET_ENTITYSET.
+  METHOD customers_get_entityset.
     zcl_demo_customer=>zif_gw_methods~get_entityset(
       EXPORTING
         iv_entity_name           = iv_entity_name
@@ -71,9 +70,8 @@ CLASS ZCL_DEMO_DPC_EXT IMPLEMENTATION.
         io_message_container     = mo_context->get_message_container( )
       IMPORTING
         et_entityset             = et_entityset
-        es_response_context      = es_response_context
-           ).
-  endmethod.
+        es_response_context      = es_response_context ).
+  ENDMETHOD.
 
 
   METHOD get_model.
@@ -103,8 +101,7 @@ CLASS ZCL_DEMO_DPC_EXT IMPLEMENTATION.
         io_message_container    = mo_context->get_message_container( )
       IMPORTING
         er_entity               = er_entity
-        es_response_context     = es_response_context
-           ).
+        es_response_context     = es_response_context ).
   ENDMETHOD.
 
 
@@ -126,8 +123,7 @@ CLASS ZCL_DEMO_DPC_EXT IMPLEMENTATION.
         io_message_container     = mo_context->get_message_container( )
       IMPORTING
         et_entityset             = et_entityset
-        es_response_context      = es_response_context
-           ).
+        es_response_context      = es_response_context ).
   ENDMETHOD.
 
 
@@ -145,8 +141,7 @@ CLASS ZCL_DEMO_DPC_EXT IMPLEMENTATION.
         io_message_container    = mo_context->get_message_container( )
       IMPORTING
         er_entity               = er_entity
-        es_response_context     = es_response_context
-           ).
+        es_response_context     = es_response_context ).
   ENDMETHOD.
 
 
@@ -168,7 +163,6 @@ CLASS ZCL_DEMO_DPC_EXT IMPLEMENTATION.
         io_message_container     = mo_context->get_message_container( )
       IMPORTING
         et_entityset             = et_entityset
-        es_response_context      = es_response_context
-           ).
+        es_response_context      = es_response_context ).
   ENDMETHOD.
 ENDCLASS.

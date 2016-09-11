@@ -156,7 +156,7 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
     GET REFERENCE OF er_entity INTO DATA(entity).
     TRY.
         zcl_demo_salesorder=>get(
-          |{ it_key_tab[ name = 'SalesOrderId' ]-value }|
+          CONV #( it_key_tab[ name = 'SalesOrderId' ]-value )
           )->zif_gw_methods~map_to_entity( entity ).
       CATCH cx_root INTO DATA(cx).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception

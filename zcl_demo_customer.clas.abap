@@ -215,13 +215,13 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
         CASE iv_source_name.
           WHEN 'SalesOrder'.
             zcl_demo_customer=>get(
-              |{ zcl_demo_salesorder=>get(
-                |{ it_key_tab[ name = 'SalesOrderId' ]-value }|
-                )->get_kunnr( ) }|
+              zcl_demo_salesorder=>get(
+                CONV #( it_key_tab[ name = 'SalesOrderId' ]-value )
+                )->get_kunnr( )
               )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
           WHEN OTHERS.
             zcl_demo_customer=>get(
-              |{ it_key_tab[ name = 'CustomerId' ]-value }|
+              CONV #( it_key_tab[ name = 'CustomerId' ]-value )
               )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
         ENDCASE.
 

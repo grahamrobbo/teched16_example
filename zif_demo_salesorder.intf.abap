@@ -29,7 +29,7 @@ interface ZIF_DEMO_SALESORDER
       ZCX_DEMO_BO .
   methods GET_AUDAT
     returning
-      value(AUDAT) type AUDAT
+      value(AUDAT) type EPSORDDAT
     raising
       ZCX_DEMO_BO .
   methods GET_KUNNR

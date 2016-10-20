@@ -15,7 +15,7 @@ protected section.
 
   class-methods RAISE_EXCEPTION_ON_ERROR
     importing
-      !BAPIRETURN type BAPIRET2TAB optional
+      !BAPIRETURN type BAPIRET2_TAB optional
     raising
       ZCX_DEMO_BO .
   class-methods GET_SUBCLASS

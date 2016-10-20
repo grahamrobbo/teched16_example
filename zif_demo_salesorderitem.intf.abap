@@ -49,12 +49,12 @@ interface ZIF_DEMO_SALESORDERITEM
       ZCX_DEMO_BO .
   methods GET_ZMENG
     returning
-      value(ZMENG) type DZMENG
+      value(ZMENG) type SNWD_QUANTITY
     raising
       ZCX_DEMO_BO .
   methods GET_ZIEME
     returning
-      value(ZIEME) type DZIEME
+      value(ZIEME) type SNWD_QUANTITY_UNIT
     raising
       ZCX_DEMO_BO .
   methods GET_MSEHT
@@ -64,7 +64,7 @@ interface ZIF_DEMO_SALESORDERITEM
       ZCX_DEMO_BO .
   methods GET_NETWR
     returning
-      value(NETWR) type NETWR_AP
+      value(NETWR) type CRMNETWR
     raising
       ZCX_DEMO_BO .
   methods GET_WAERK

@@ -1,66 +1,54 @@
-CLASS zcl_demo_salesorderitem DEFINITION
-  PUBLIC
-  INHERITING FROM zcl_bo_abstract
-  CREATE PROTECTED .
+class ZCL_DEMO_SALESORDERITEM definition
+  public
+  inheriting from ZCL_BO_ABSTRACT
+  create protected .
 
-  PUBLIC SECTION.
+public section.
 
-    INTERFACES zif_demo_salesorderitem .
-    INTERFACES zif_gw_methods .
+  interfaces ZIF_DEMO_SALESORDERITEM .
+  interfaces ZIF_GW_METHODS .
 
-    ALIASES get
-      FOR zif_demo_salesorderitem~get .
-    ALIASES get_arktx
-      FOR zif_demo_salesorderitem~get_arktx .
-    ALIASES get_matnr
-      FOR zif_demo_salesorderitem~get_matnr .
-    ALIASES get_mseht
-      FOR zif_demo_salesorderitem~get_mseht .
-    ALIASES get_netwr
-      FOR zif_demo_salesorderitem~get_netwr .
-    ALIASES get_posnr
-      FOR zif_demo_salesorderitem~get_posnr .
-    ALIASES get_vbeln
-      FOR zif_demo_salesorderitem~get_vbeln .
-    ALIASES get_waerk
-      FOR zif_demo_salesorderitem~get_waerk .
-    ALIASES get_waerk_txt
-      FOR zif_demo_salesorderitem~get_waerk_txt .
-    ALIASES get_zieme
-      FOR zif_demo_salesorderitem~get_zieme .
-    ALIASES get_zmeng
-      FOR zif_demo_salesorderitem~get_zmeng .
+  aliases GET
+    for ZIF_DEMO_SALESORDERITEM~GET .
+  aliases GET_CURRENCY_CODE
+    for ZIF_DEMO_SALESORDERITEM~GET_CURRENCY_CODE .
+  aliases GET_CURRENCY_TXT
+    for ZIF_DEMO_SALESORDERITEM~GET_CURRENCY_TXT .
+  aliases GET_NET_AMOUNT
+    for ZIF_DEMO_SALESORDERITEM~GET_NET_AMOUNT .
+  aliases GET_NODE_KEY
+    for ZIF_DEMO_SALESORDERITEM~GET_NODE_KEY .
+  aliases GET_PRODUCT_ID
+    for ZIF_DEMO_SALESORDERITEM~GET_PRODUCT_ID .
+  aliases GET_SO_ID
+    for ZIF_DEMO_SALESORDERITEM~GET_SO_ID .
+  aliases GET_SO_ITEM_POS
+    for ZIF_DEMO_SALESORDERITEM~GET_SO_ITEM_POS .
+  aliases GET_TEXT
+    for ZIF_DEMO_SALESORDERITEM~GET_TEXT .
 
-    METHODS constructor
-      IMPORTING
-        !key TYPE zif_demo_salesorderitem=>key
-      RAISING
-        zcx_demo_bo .
-  PROTECTED SECTION.
+  methods CONSTRUCTOR
+    importing
+      !NODE_KEY type SNWD_NODE_KEY
+    raising
+      ZCX_DEMO_BO .
+protected section.
 
-    TYPES:
-      BEGIN OF uom_type,
-        msehi TYPE msehi,
-        mseht TYPE mseht,
-      END OF uom_type .
-    TYPES:
-      uom_ttype TYPE TABLE OF uom_type .
-    TYPES:
-      BEGIN OF curr_type,
+  types:
+    BEGIN OF curr_type,
         waers TYPE waers_curc,
         ltext TYPE ltext,
       END OF curr_type .
-    TYPES:
-      curr_ttype TYPE TABLE OF curr_type .
+  types:
+    curr_ttype TYPE TABLE OF curr_type .
 
-    CLASS-DATA uom_texts TYPE uom_ttype .
-    CLASS-DATA currency_texts TYPE curr_ttype .
+  class-data CURRENCY_TEXTS type CURR_TTYPE .
 
-    METHODS load_item_data
-      IMPORTING
-        !key TYPE zif_demo_salesorderitem=>key
-      RAISING
-        zcx_demo_bo .
+  methods LOAD_ITEM_DATA
+    importing
+      !NODE_KEY type SNWD_NODE_KEY
+    raising
+      ZCX_DEMO_BO .
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -72,50 +60,45 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
   METHOD constructor.
     super->constructor( ).
 
-    load_item_data( key ).
+    load_item_data( node_key ).
   ENDMETHOD.
 
 
   METHOD load_item_data.
-    SELECT SINGLE *
-      FROM vbap
-      INTO CORRESPONDING FIELDS OF zif_demo_salesorderitem~item_data
-      WHERE vbeln = key-vbeln
-      AND posnr = key-posnr.
+
+    SELECT SINGLE soi~node_key, soi~parent_key, soi~so_item_pos,
+      pd~product_id, text~text, soi~net_amount, soi~currency_code
+           FROM
+             ( snwd_so_i AS soi
+                 INNER JOIN
+                   snwd_pd AS pd ON soi~product_guid = pd~node_key )
+                     LEFT OUTER JOIN
+                       snwd_texts AS text ON pd~name_guid = text~parent_key AND text~language = @sy-langu
+      INTO CORRESPONDING FIELDS OF @zif_demo_salesorderitem~item_data
+      WHERE soi~node_key = @node_key.
 
     IF sy-subrc NE 0.
       RAISE EXCEPTION TYPE zcx_demo_bo
         EXPORTING
           textid  = zcx_demo_bo=>not_found
           bo_type = 'SalesOrderItem'
-          bo_id   = |{ key-vbeln }/{ key-posnr }|.
+          bo_id   = |{ node_key }|.
     ENDIF.
+
   ENDMETHOD.
 
 
   METHOD zif_demo_salesorderitem~get.
 
-    DATA: lv_key LIKE key.
-    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
-      EXPORTING
-        input  = key-vbeln
-      IMPORTING
-        output = lv_key-vbeln.
-    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
-      EXPORTING
-        input  = key-posnr
-      IMPORTING
-        output = lv_key-posnr.
-
     TRY.
-        DATA(inst) = zif_demo_salesorderitem~instances[ key = lv_key ].
+        DATA(inst) = zif_demo_salesorderitem~instances[ node_key = node_key ].
       CATCH cx_sy_itab_line_not_found.
-        inst-key = lv_key.
+        inst-node_key = node_key.
         DATA(class_name) = get_subclass( 'ZCL_DEMO_SALESORDERITEM' ).
         CREATE OBJECT inst-instance
           TYPE (class_name)
           EXPORTING
-            key = inst-key.
+            node_key = node_key.
         APPEND inst TO zif_demo_salesorderitem~instances.
     ENDTRY.
 
@@ -124,82 +107,60 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD zif_demo_salesorderitem~get_arktx.
-    arktx = zif_demo_salesorderitem~item_data-arktx.
+  METHOD zif_demo_salesorderitem~get_currency_code.
+    currency_code = zif_demo_salesorderitem~item_data-currency_code.
   ENDMETHOD.
 
 
-  METHOD zif_demo_salesorderitem~get_matnr.
-    matnr = zif_demo_salesorderitem~item_data-matnr.
-  ENDMETHOD.
-
-
-  METHOD zif_demo_salesorderitem~get_mseht.
+  METHOD zif_demo_salesorderitem~get_currency_txt.
 
     TRY.
-        mseht = uom_texts[ msehi = zif_demo_salesorderitem~item_data-zieme ]-mseht.
-      CATCH cx_sy_itab_line_not_found.
-        SELECT *
-          FROM t006a
-          APPENDING CORRESPONDING FIELDS OF TABLE uom_texts
-          WHERE spras = sy-langu
-          AND msehi = zif_demo_salesorderitem~item_data-zieme.
-        IF sy-subrc NE 0.
-          APPEND VALUE #( msehi = zif_demo_salesorderitem~item_data-zieme mseht = 'N/A' ) TO uom_texts.
-        ENDIF.
-        mseht = uom_texts[ msehi = zif_demo_salesorderitem~item_data-zieme ]-mseht.
-    ENDTRY.
-
-  ENDMETHOD.
-
-
-  METHOD zif_demo_salesorderitem~get_netwr.
-    netwr = zif_demo_salesorderitem~item_data-netwr.
-  ENDMETHOD.
-
-
-  METHOD zif_demo_salesorderitem~get_posnr.
-    posnr = zif_demo_salesorderitem~item_data-posnr.
-  ENDMETHOD.
-
-
-  METHOD zif_demo_salesorderitem~get_vbeln.
-    vbeln = zif_demo_salesorderitem~item_data-vbeln.
-  ENDMETHOD.
-
-
-  METHOD zif_demo_salesorderitem~get_waerk.
-    waerk = zif_demo_salesorderitem~item_data-waerk.
-  ENDMETHOD.
-
-
-  METHOD zif_demo_salesorderitem~get_waerk_txt.
-
-    TRY.
-        waerk_txt = currency_texts[ waers = zif_demo_salesorderitem~item_data-waerk ]-ltext.
+        currency_txt = currency_texts[ waers = zif_demo_salesorderitem~item_data-currency_code ]-ltext.
       CATCH cx_sy_itab_line_not_found.
         SELECT *
           FROM tcurt
           APPENDING CORRESPONDING FIELDS OF TABLE currency_texts
           WHERE spras = sy-langu
-          AND waers = zif_demo_salesorderitem~item_data-waerk.
+          AND waers = zif_demo_salesorderitem~item_data-currency_code.
         IF sy-subrc NE 0.
-          APPEND VALUE #( waers = zif_demo_salesorderitem~item_data-waerk ltext = 'N/A' ) TO currency_texts.
+          APPEND VALUE #( waers = zif_demo_salesorderitem~item_data-currency_code ltext = 'N/A' ) TO currency_texts.
         ENDIF.
-        waerk_txt = currency_texts[ waers = zif_demo_salesorderitem~item_data-waerk ]-ltext.
+        currency_txt = currency_texts[ waers = zif_demo_salesorderitem~item_data-currency_code ]-ltext.
     ENDTRY.
 
   ENDMETHOD.
 
 
-  METHOD zif_demo_salesorderitem~get_zieme.
-    zieme = zif_demo_salesorderitem~item_data-zieme.
+  METHOD zif_demo_salesorderitem~get_net_amount.
+    net_amount = zif_demo_salesorderitem~item_data-net_amount.
   ENDMETHOD.
 
 
-  METHOD zif_demo_salesorderitem~get_zmeng.
-    zmeng = zif_demo_salesorderitem~item_data-zmeng.
+  METHOD zif_demo_salesorderitem~get_node_key.
+    node_key = zif_demo_salesorderitem~item_data-node_key.
   ENDMETHOD.
+
+
+  method ZIF_DEMO_SALESORDERITEM~GET_PRODUCT_ID.
+    product_id = zif_demo_salesorderitem~item_data-product_id.
+  endmethod.
+
+
+  METHOD zif_demo_salesorderitem~get_so_id.
+
+    so_id = zcl_demo_salesorder=>get( zif_demo_salesorderitem~item_data-parent_key )->get_so_id( ).
+
+  ENDMETHOD.
+
+
+  METHOD zif_demo_salesorderitem~get_so_item_pos.
+    so_item_pos = zif_demo_salesorderitem~item_data-so_item_pos.
+  ENDMETHOD.
+
+
+  method ZIF_DEMO_SALESORDERITEM~GET_TEXT.
+    text = zif_demo_salesorderitem~item_data-text.
+  endmethod.
 
 
   METHOD zif_gw_methods~create_deep_entity.
@@ -237,11 +198,11 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
   METHOD zif_gw_methods~get_entity.
 
     TRY.
-        zcl_demo_salesorderitem=>get(
-          VALUE #(
-            vbeln = it_key_tab[ name = 'SalesOrderId' ]-value
-            posnr = it_key_tab[ name = 'ItemNo' ]-value )
-            )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
+        zcl_demo_salesorder=>get_using_so_id(
+          CONV #( it_key_tab[ name = 'SalesOrderId' ]-value )
+          )->get_item_by_pos(
+          CONV #( it_key_tab[ name = 'ItemNo' ]-value )
+          )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
 
       CATCH cx_root INTO DATA(cx_root).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
@@ -273,8 +234,8 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
     ENDTRY.
 
     TRY.
-        DATA(osreftab) = zcl_demo_salesorder=>get(
-          |{ it_key_tab[ name = 'SalesOrderId' ]-value }|
+        DATA(osreftab) = zcl_demo_salesorder=>get_using_so_id(
+          CONV #( it_key_tab[ name = 'SalesOrderId' ]-value )
           )->get_items( ).
 
         IF io_tech_request_context->has_inlinecount( ) = abap_true.

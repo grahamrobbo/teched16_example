@@ -1,80 +1,65 @@
-interface ZIF_DEMO_SALESORDERITEM
-  public .
+INTERFACE zif_demo_salesorderitem
+  PUBLIC .
 
 
-  interfaces ZIF_GW_METHODS .
+  INTERFACES zif_gw_methods .
 
-  types:
-    BEGIN OF key,
-      vbeln TYPE vbeln_va,
-      posnr TYPE posnr_va,
-    END OF key .
-  types:
+  TYPES:
     BEGIN OF instance_type,
-      key      TYPE key,
+      node_key TYPE snwd_node_key,
       instance TYPE REF TO zif_demo_salesorderitem,
     END OF instance_type .
-  types:
+  TYPES:
     instance_ttype TYPE TABLE OF instance_type .
 
-  class-data INSTANCES type INSTANCE_TTYPE .
-  data ITEM_DATA type ZDEMO_SALESORDERITEM .
+  CLASS-DATA instances TYPE instance_ttype .
+  DATA item_data TYPE zdemo_salesorderitem .
 
-  class-methods GET
-    importing
-      !KEY type ZIF_DEMO_SALESORDERITEM=>KEY
-    returning
-      value(INSTANCE) type ref to ZIF_DEMO_SALESORDERITEM
-    raising
-      ZCX_DEMO_BO .
-  methods GET_VBELN
-    returning
-      value(VBELN) type VBELN
-    raising
-      ZCX_DEMO_BO .
-  methods GET_POSNR
-    returning
-      value(POSNR) type POSNR_VA
-    raising
-      ZCX_DEMO_BO .
-  methods GET_MATNR
-    returning
-      value(MATNR) type MATNR
-    raising
-      ZCX_DEMO_BO .
-  methods GET_ARKTX
-    returning
-      value(ARKTX) type ARKTX
-    raising
-      ZCX_DEMO_BO .
-  methods GET_ZMENG
-    returning
-      value(ZMENG) type SNWD_QUANTITY
-    raising
-      ZCX_DEMO_BO .
-  methods GET_ZIEME
-    returning
-      value(ZIEME) type SNWD_QUANTITY_UNIT
-    raising
-      ZCX_DEMO_BO .
-  methods GET_MSEHT
-    returning
-      value(MSEHT) type MSEHT
-    raising
-      ZCX_DEMO_BO .
-  methods GET_NETWR
-    returning
-      value(NETWR) type CRMNETWR
-    raising
-      ZCX_DEMO_BO .
-  methods GET_WAERK
-    returning
-      value(WAERK) type WAERK
-    raising
-      ZCX_DEMO_BO .
-  methods GET_WAERK_TXT
-    returning
-      value(WAERK_TXT) type LTEXT
-    raising
-      ZCX_DEMO_BO .
-endinterface.
+  CLASS-METHODS get
+    IMPORTING
+      !node_key       TYPE snwd_node_key
+    RETURNING
+      VALUE(instance) TYPE REF TO zif_demo_salesorderitem
+    RAISING
+      zcx_demo_bo .
+  METHODS get_node_key
+    RETURNING
+      VALUE(node_key) TYPE snwd_node_key
+    RAISING
+      zcx_demo_bo .
+  METHODS get_so_id
+    RETURNING
+      VALUE(so_id) TYPE snwd_so_id
+    RAISING
+      zcx_demo_bo .
+  METHODS get_so_item_pos
+    RETURNING
+      VALUE(so_item_pos) TYPE snwd_so_item_pos
+    RAISING
+      zcx_demo_bo .
+  METHODS get_product_id
+    RETURNING
+      VALUE(product_id) TYPE snwd_product_id
+    RAISING
+      zcx_demo_bo .
+  METHODS get_text
+    RETURNING
+      VALUE(text) TYPE snwd_desc
+    RAISING
+      zcx_demo_bo .
+  METHODS get_net_amount
+    RETURNING
+      VALUE(net_amount) TYPE snwd_ttl_net_amount
+    RAISING
+      zcx_demo_bo .
+  METHODS get_currency_code
+    RETURNING
+      VALUE(currency_code) TYPE snwd_curr_code
+    RAISING
+      zcx_demo_bo .
+  METHODS get_currency_txt
+    RETURNING
+      VALUE(currency_txt) TYPE zdemo_waerk_text
+    RAISING
+      zcx_demo_bo .
+ENDINTERFACE.

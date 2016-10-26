@@ -1,34 +1,34 @@
-CLASS zcl_demo_salesorder DEFINITION
-  PUBLIC
-  INHERITING FROM zcl_bo_abstract
-  CREATE PROTECTED .
+class ZCL_DEMO_SALESORDER definition
+  public
+  inheriting from ZCL_BO_ABSTRACT
+  create protected .
 
-  PUBLIC SECTION.
+public section.
 
-    INTERFACES zif_demo_salesorder .
-    INTERFACES zif_gw_methods .
+  interfaces ZIF_DEMO_SALESORDER .
+  interfaces ZIF_GW_METHODS .
 
-    ALIASES get
-      FOR zif_demo_salesorder~get .
-    ALIASES get_audat
-      FOR zif_demo_salesorder~get_audat .
-    ALIASES get_kunnr
-      FOR zif_demo_salesorder~get_kunnr .
-    ALIASES get_vbeln
-      FOR zif_demo_salesorder~get_vbeln .
+  aliases GET
+    for ZIF_DEMO_SALESORDER~GET .
+  aliases GET_CREATED_AT
+    for ZIF_DEMO_SALESORDER~GET_CREATED_AT .
+  aliases GET_SO_ID
+    for ZIF_DEMO_SALESORDER~GET_SO_ID .
+  aliases GET_USING_SO_ID
+    for ZIF_DEMO_SALESORDER~GET_USING_SO_ID .
 
-    METHODS constructor
-      IMPORTING
-        !vbeln TYPE vbeln
-      RAISING
-        zcx_demo_bo .
-  PROTECTED SECTION.
+  methods CONSTRUCTOR
+    importing
+      !NODE_KEY type SNWD_NODE_KEY
+    raising
+      ZCX_DEMO_BO .
+protected section.
 
-    METHODS load_salesorder_data
-      IMPORTING
-        !vbeln TYPE vbeln
-      RAISING
-        zcx_demo_bo .
+  methods LOAD_SALESORDER_DATA
+    importing
+      !NODE_KEY type SNWD_NODE_KEY
+    raising
+      ZCX_DEMO_BO .
   PRIVATE SECTION.
 ENDCLASS.
 
@@ -40,7 +40,7 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
   METHOD constructor.
     super->constructor( ).
 
-    load_salesorder_data( vbeln ).
+    load_salesorder_data( node_key ).
 
   ENDMETHOD.
 
@@ -48,38 +48,31 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
   METHOD load_salesorder_data.
 
     SELECT SINGLE *
-      FROM vbak
+      FROM snwd_so
       INTO CORRESPONDING FIELDS OF zif_demo_salesorder~salesorder_data
-      WHERE vbeln = vbeln.
+      WHERE node_key = node_key.
 
     IF sy-subrc NE 0.
       RAISE EXCEPTION TYPE zcx_demo_bo
         EXPORTING
           textid  = zcx_demo_bo=>not_found
           bo_type = 'DEMO_SALESORDER'
-          bo_id   = |{ vbeln }|.
+          bo_id   = |{ node_key }|.
     ENDIF.
   ENDMETHOD.
 
 
   METHOD zif_demo_salesorder~get.
 
-    DATA: lv_vbeln TYPE vbeln.
-    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
-      EXPORTING
-        input  = vbeln
-      IMPORTING
-        output = lv_vbeln.
-
     TRY.
-        DATA(inst) = zif_demo_salesorder~instances[ vbeln = lv_vbeln ].
+        DATA(inst) = zif_demo_salesorder~instances[ node_key = node_key ].
       CATCH cx_sy_itab_line_not_found.
-        inst-vbeln = lv_vbeln.
+        inst-node_key = node_key.
         DATA(class_name) = get_subclass( 'ZCL_DEMO_SALESORDER' ).
         CREATE OBJECT inst-instance
           TYPE (class_name)
           EXPORTING
-            vbeln = inst-vbeln.
+            node_key = inst-node_key.
         APPEND inst TO zif_demo_salesorder~instances.
     ENDTRY.
 
@@ -87,22 +80,27 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD zif_demo_salesorder~get_audat.
-    audat = zif_demo_salesorder~salesorder_data-audat.
+  METHOD zif_demo_salesorder~get_created_at.
+    created_at = me->zif_demo_salesorder~salesorder_data-created_at.
+  ENDMETHOD.
+
+
+  METHOD zif_demo_salesorder~get_customer.
+    customer = zcl_demo_customer=>get( zif_demo_salesorder~salesorder_data-buyer_guid ).
   ENDMETHOD.
 
 
   METHOD zif_demo_salesorder~get_items.
-    DATA key TYPE zif_demo_salesorderitem=>key.
 
-    key-vbeln = zif_demo_salesorder~get_vbeln( ).
+    DATA(so_node_key) = zif_demo_salesorder~get_node_key( ).
 
-    SELECT posnr
-      FROM vbap
-      INTO key-posnr
-      WHERE vbeln = key-vbeln.
+    SELECT node_key
+      FROM snwd_so_i
+      INTO @DATA(node_key)
+      WHERE parent_key = @so_node_key
+      ORDER BY so_item_pos.
       TRY.
-          APPEND zcl_demo_salesorderitem=>get( key ) TO items.
+          APPEND zcl_demo_salesorderitem=>get( node_key ) TO items.
         CATCH cx_root.
       ENDTRY.
     ENDSELECT.
@@ -110,13 +108,61 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
   ENDMETHOD.
 
 
-  METHOD zif_demo_salesorder~get_kunnr.
-    kunnr = zif_demo_salesorder~salesorder_data-kunnr.
+  METHOD zif_demo_salesorder~get_item_by_pos.
+
+    DATA(so_node_key) = zif_demo_salesorder~get_node_key( ).
+
+    DATA: lv_so_item_pos TYPE snwd_so_item_pos.
+    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+      EXPORTING
+        input  = so_item_pos
+      IMPORTING
+        output = lv_so_item_pos.
+
+    SELECT SINGLE node_key
+      FROM snwd_so_i
+      INTO @DATA(node_key)
+      WHERE parent_key = @so_node_key
+      AND so_item_pos = @lv_so_item_pos.
+
+    item = zcl_demo_salesorderitem=>get( node_key ).
+
   ENDMETHOD.
 
 
-  METHOD zif_demo_salesorder~get_vbeln.
-    vbeln = zif_demo_salesorder~salesorder_data-vbeln.
+  METHOD zif_demo_salesorder~get_node_key.
+    node_key = zif_demo_salesorder~salesorder_data-node_key.
+  ENDMETHOD.
+
+
+  method ZIF_DEMO_SALESORDER~GET_SO_ID.
+    so_id = me->zif_demo_salesorder~salesorder_data-so_id.
+  endmethod.
+
+
+  METHOD zif_demo_salesorder~get_using_so_id.
+
+    DATA: lv_so_id TYPE snwd_so_id.
+    CALL FUNCTION 'CONVERSION_EXIT_ALPHA_INPUT'
+      EXPORTING
+        input  = so_id
+      IMPORTING
+        output = lv_so_id.
+
+    SELECT SINGLE node_key
+      FROM snwd_so
+      INTO @DATA(node_key)
+      WHERE so_id = @lv_so_id.
+    IF sy-subrc = 0.
+      instance = get( node_key ).
+    ELSE.
+      RAISE EXCEPTION TYPE zcx_demo_bo
+        EXPORTING
+          textid  = zcx_demo_bo=>not_found
+          bo_type = 'SalesOrder'
+          bo_id   = |{ so_id }|.
+    ENDIF.
+
   ENDMETHOD.
 
 
@@ -153,11 +199,10 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
 
 
   METHOD zif_gw_methods~get_entity.
-    GET REFERENCE OF er_entity INTO DATA(entity).
     TRY.
-        zcl_demo_salesorder=>get(
+        zcl_demo_salesorder=>get_using_so_id(
           CONV #( it_key_tab[ name = 'SalesOrderId' ]-value )
-          )->zif_gw_methods~map_to_entity( entity ).
+          )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
       CATCH cx_root INTO DATA(cx).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
@@ -209,12 +254,12 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
           iv_entity_name = iv_entity_name
           iv_field_name  = option->property ).
       CASE abap_field.
-        WHEN 'VBELN'.
-          DATA(vbeln_range) = option->select_options.
-          where_clause = |{ where_clause } & VBELN IN VBELN_RANGE|.
-        WHEN 'AUDAT'.
-          DATA(audat_range) = option->select_options.
-          where_clause = |{ where_clause } & AUDAT IN AUDAT_RANGE|.
+        WHEN 'SO_ID'.
+          DATA(so_range) = option->select_options.
+          where_clause = |{ where_clause } & SO_ID IN @SO_RANGE|.
+        WHEN 'CREATED_AT'.
+          DATA(created_range) = option->select_options.
+          where_clause = |{ where_clause } & CREATED_AT IN @CREATED_RANGE|.
         WHEN OTHERS.
           RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
             EXPORTING
@@ -222,14 +267,15 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
               filter_param = option->property.
       ENDCASE.
     ENDLOOP.
-    IF sy-subrc NE 0. " Catch complex $filter queries
-      where_clause = io_tech_request_context->get_filter( )->get_filter_string( ).
+    IF sy-subrc NE 0. " Catch complex $filter queries - see ZCL_CUSTOMER->ZIF_GW_METHODS~GET_ENTITYSET for example
+      "where_clause = io_tech_request_context->get_filter( )->get_filter_string( ).
     ENDIF.
 
     CASE iv_source_name.
       WHEN 'Customer'.
         TRY.
-            where_clause = |{ where_clause } & KUNNR = '{ zcl_demo_customer=>get( |{ it_key_tab[ name = 'CustomerId' ]-value }| )->get_kunnr( ) }'|.
+            DATA(buyer_guid) = zcl_demo_customer=>get_using_bp_id( CONV #( it_key_tab[ name = 'CustomerId' ]-value ) )->get_node_key( ).
+            where_clause = |{ where_clause } & BUYER_GUID = @BUYER_GUID|.
           CATCH cx_sy_itab_line_not_found INTO DATA(cx_sy_itab_line_not_found).
             RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
               EXPORTING
@@ -249,15 +295,15 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
           DATA dbcount TYPE int4 .
           SELECT COUNT(*)
             INTO dbcount
-            FROM vbak
+            FROM snwd_so
             WHERE (where_clause).
           es_response_context-inlinecount = dbcount.
         ENDIF.
 
         " Get primary keys
-        SELECT vbeln
-          INTO CORRESPONDING FIELDS OF <entity>
-          FROM vbak
+        SELECT node_key
+          INTO CORRESPONDING FIELDS OF @<entity>
+          FROM snwd_so
           WHERE (where_clause)
           ORDER BY (orderby_clause).
           CHECK sy-dbcnt > is_paging-skip.
@@ -266,12 +312,13 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
             EXIT.
           ENDIF.
         ENDSELECT.
-      CATCH cx_sy_dynamic_osql_syntax INTO DATA(cx_sy_dynamic_osql_syntax).
+
+      CATCH cx_sy_dynamic_osql_error INTO DATA(cx_sy_dynamic_osql_error).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid   = /iwbep/cx_mgw_busi_exception=>business_error
-            previous = cx_sy_dynamic_osql_syntax
-            message  = |{ cx_sy_dynamic_osql_syntax->get_text( ) }|.
+            previous = cx_sy_dynamic_osql_error
+            message  = |{ cx_sy_dynamic_osql_error->get_text( ) }|.
     ENDTRY.
 
     " $count
@@ -303,10 +350,9 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
     " Fill entities
     LOOP AT <entityset> REFERENCE INTO entity.
       ASSIGN entity->* TO <entity>.
-      ASSIGN COMPONENT 'VBELN' OF STRUCTURE <entity> TO FIELD-SYMBOL(<vbeln>).
-      ASSIGN entity->* TO <entity>.
+      ASSIGN COMPONENT 'NODE_KEY' OF STRUCTURE <entity> TO FIELD-SYMBOL(<node_key>).
       TRY.
-          zcl_demo_salesorder=>get( <vbeln> )->zif_gw_methods~map_to_entity( entity ).
+          zcl_demo_salesorder=>get( <node_key> )->zif_gw_methods~map_to_entity( entity ).
         CATCH zcx_demo_bo.
       ENDTRY.
     ENDLOOP.

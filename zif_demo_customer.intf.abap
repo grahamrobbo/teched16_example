@@ -6,7 +6,7 @@ INTERFACE zif_demo_customer
 
   TYPES:
     BEGIN OF instance_type,
-      kunnr    TYPE kunnr,
+      node_key TYPE snwd_node_key,
       instance TYPE REF TO zif_demo_customer,
     END OF instance_type .
   TYPES:
@@ -17,54 +17,56 @@ INTERFACE zif_demo_customer
 
   CLASS-METHODS get
     IMPORTING
-      !kunnr          TYPE kunnr
+      !node_key       TYPE snwd_node_key
     RETURNING
       VALUE(instance) TYPE REF TO zif_demo_customer
     RAISING
       zcx_demo_bo .
-  METHODS get_kunnr
+  CLASS-METHODS get_using_bp_id
+    IMPORTING
+      !bp_id          TYPE snwd_partner_id
     RETURNING
-      VALUE(kunnr) TYPE kunnr
+      VALUE(instance) TYPE REF TO zif_demo_customer
     RAISING
       zcx_demo_bo .
-  METHODS get_name1
+  METHODS get_node_key
     RETURNING
-      VALUE(name1) TYPE name1_gp
+      VALUE(node_key) TYPE snwd_node_key
     RAISING
       zcx_demo_bo .
-  METHODS get_stras
+  METHODS get_bp_id
     RETURNING
-      VALUE(stras) TYPE stras_gp
+      VALUE(bp_id) TYPE snwd_partner_id
     RAISING
       zcx_demo_bo .
-  METHODS get_ort01
+  METHODS get_company_name
     RETURNING
-      VALUE(ort01) TYPE ort01_gp
+      VALUE(company_name) TYPE snwd_company_name
     RAISING
       zcx_demo_bo .
-  METHODS get_regio
+  METHODS get_street
     RETURNING
-      VALUE(regio) TYPE regio
+      VALUE(street) TYPE snwd_street
     RAISING
       zcx_demo_bo .
-  METHODS get_region_text
+  METHODS get_city
     RETURNING
-      VALUE(region_text) TYPE bezei20
+      VALUE(city) TYPE snwd_city
     RAISING
       zcx_demo_bo .
-  METHODS get_pstlz
+  METHODS get_postal_code
     RETURNING
-      VALUE(pstlz) TYPE pstlz
+      VALUE(postal_code) TYPE snwd_postal_code
     RAISING
       zcx_demo_bo .
-  METHODS get_land1
+  METHODS get_country
     RETURNING
-      VALUE(land1) TYPE land1_gp
+      VALUE(country) TYPE snwd_country
     RAISING
       zcx_demo_bo .
-  METHODS get_land_text
+  METHODS get_country_text
     RETURNING
-      VALUE(land_text) TYPE landx50
+      VALUE(country_text) TYPE landx50
     RAISING
       zcx_demo_bo .
 ENDINTERFACE.

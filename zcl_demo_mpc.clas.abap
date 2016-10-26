@@ -192,7 +192,7 @@ lo_entity_type = model->create_entity_type( iv_entity_type_name = 'Customer' iv_
 *Properties
 ***********************************************************************************************************************************
 
-lo_property = lo_entity_type->create_property( iv_property_name = 'CustomerId' iv_abap_fieldname = 'KUNNR' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'CustomerId' iv_abap_fieldname = 'BP_ID' ). "#EC NOTEXT
 lo_property->set_is_key( ).
 lo_property->set_type_edm_string( ).
 lo_property->set_maxlength( iv_max_length = 10 ). "#EC NOTEXT
@@ -202,47 +202,31 @@ lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_true ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_true ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'Name' iv_abap_fieldname = 'NAME1' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'Name' iv_abap_fieldname = 'COMPANY_NAME' ). "#EC NOTEXT
 lo_property->set_type_edm_string( ).
-lo_property->set_maxlength( iv_max_length = 35 ). "#EC NOTEXT
+lo_property->set_maxlength( iv_max_length = 80 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_true ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_true ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'Street' iv_abap_fieldname = 'STRAS' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'Street' iv_abap_fieldname = 'STREET' ). "#EC NOTEXT
 lo_property->set_type_edm_string( ).
-lo_property->set_maxlength( iv_max_length = 35 ). "#EC NOTEXT
+lo_property->set_maxlength( iv_max_length = 60 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_true ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_true ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'City' iv_abap_fieldname = 'ORT01' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'City' iv_abap_fieldname = 'CITY' ). "#EC NOTEXT
 lo_property->set_type_edm_string( ).
-lo_property->set_maxlength( iv_max_length = 35 ). "#EC NOTEXT
+lo_property->set_maxlength( iv_max_length = 40 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_true ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_true ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'RegionId' iv_abap_fieldname = 'REGIO' ). "#EC NOTEXT
-lo_property->set_type_edm_string( ).
-lo_property->set_maxlength( iv_max_length = 3 ). "#EC NOTEXT
-lo_property->set_creatable( abap_false ).
-lo_property->set_updatable( abap_false ).
-lo_property->set_sortable( abap_true ).
-lo_property->set_nullable( abap_false ).
-lo_property->set_filterable( abap_true ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'Region' iv_abap_fieldname = 'REGION_TEXT' ). "#EC NOTEXT
-lo_property->set_type_edm_string( ).
-lo_property->set_maxlength( iv_max_length = 20 ). "#EC NOTEXT
-lo_property->set_creatable( abap_false ).
-lo_property->set_updatable( abap_false ).
-lo_property->set_sortable( abap_false ).
-lo_property->set_nullable( abap_false ).
-lo_property->set_filterable( abap_false ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'PostCode' iv_abap_fieldname = 'PSTLZ' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'PostCode' iv_abap_fieldname = 'POSTAL_CODE' ). "#EC NOTEXT
 lo_property->set_type_edm_string( ).
 lo_property->set_maxlength( iv_max_length = 10 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
@@ -250,7 +234,7 @@ lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_true ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_true ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'CountryId' iv_abap_fieldname = 'LAND1' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'CountryId' iv_abap_fieldname = 'COUNTRY' ). "#EC NOTEXT
 lo_property->set_type_edm_string( ).
 lo_property->set_maxlength( iv_max_length = 3 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
@@ -258,7 +242,7 @@ lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_true ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_true ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'Country' iv_abap_fieldname = 'LAND_TEXT' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'Country' iv_abap_fieldname = 'COUNTRY_TEXT' ). "#EC NOTEXT
 lo_property->set_type_edm_string( ).
 lo_property->set_maxlength( iv_max_length = 50 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
@@ -315,7 +299,7 @@ lo_entity_type = model->create_entity_type( iv_entity_type_name = 'SalesOrder' i
 *Properties
 ***********************************************************************************************************************************
 
-lo_property = lo_entity_type->create_property( iv_property_name = 'SalesOrderId' iv_abap_fieldname = 'VBELN' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'SalesOrderId' iv_abap_fieldname = 'SO_ID' ). "#EC NOTEXT
 lo_property->set_is_key( ).
 lo_property->set_type_edm_string( ).
 lo_property->set_maxlength( iv_max_length = 10 ). "#EC NOTEXT
@@ -325,7 +309,7 @@ lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_true ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_true ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'SalesOrderDate' iv_abap_fieldname = 'AUDAT' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'SalesOrderDate' iv_abap_fieldname = 'CREATED_AT' ). "#EC NOTEXT
 lo_property->set_type_edm_datetimeoffset( ).
 lo_property->set_precison( iv_precision = 7 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
@@ -382,7 +366,7 @@ lo_entity_type = model->create_entity_type( iv_entity_type_name = 'SalesOrderIte
 *Properties
 ***********************************************************************************************************************************
 
-lo_property = lo_entity_type->create_property( iv_property_name = 'SalesOrderId' iv_abap_fieldname = 'VBELN' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'SalesOrderId' iv_abap_fieldname = 'SO_ID' ). "#EC NOTEXT
 lo_property->set_is_key( ).
 lo_property->set_type_edm_string( ).
 lo_property->set_maxlength( iv_max_length = 10 ). "#EC NOTEXT
@@ -392,51 +376,17 @@ lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_false ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'ItemNo' iv_abap_fieldname = 'POSNR' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'ItemNo' iv_abap_fieldname = 'SO_ITEM_POS' ). "#EC NOTEXT
 lo_property->set_is_key( ).
 lo_property->set_type_edm_string( ).
-lo_property->set_maxlength( iv_max_length = 6 ). "#EC NOTEXT
+lo_property->set_maxlength( iv_max_length = 10 ). "#EC NOTEXT
+lo_property->set_conversion_exit( 'ALPHA' ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
 lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_false ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'ProductId' iv_abap_fieldname = 'MATNR' ). "#EC NOTEXT
-lo_property->set_type_edm_string( ).
-lo_property->set_maxlength( iv_max_length = 18 ). "#EC NOTEXT
-lo_property->set_conversion_exit( 'MATN1' ). "#EC NOTEXT
-lo_property->set_creatable( abap_false ).
-lo_property->set_updatable( abap_false ).
-lo_property->set_sortable( abap_false ).
-lo_property->set_nullable( abap_false ).
-lo_property->set_filterable( abap_false ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'Product' iv_abap_fieldname = 'ARKTX' ). "#EC NOTEXT
-lo_property->set_type_edm_string( ).
-lo_property->set_maxlength( iv_max_length = 40 ). "#EC NOTEXT
-lo_property->set_creatable( abap_false ).
-lo_property->set_updatable( abap_false ).
-lo_property->set_sortable( abap_false ).
-lo_property->set_nullable( abap_false ).
-lo_property->set_filterable( abap_false ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'Quantity' iv_abap_fieldname = 'ZMENG' ). "#EC NOTEXT
-lo_property->set_type_edm_decimal( ).
-lo_property->set_precison( iv_precision = 3 ). "#EC NOTEXT
-lo_property->set_maxlength( iv_max_length = 13 ). "#EC NOTEXT
-lo_property->set_creatable( abap_false ).
-lo_property->set_updatable( abap_false ).
-lo_property->set_sortable( abap_false ).
-lo_property->set_nullable( abap_false ).
-lo_property->set_filterable( abap_false ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'UoM' iv_abap_fieldname = 'ZIEME' ). "#EC NOTEXT
-lo_property->set_type_edm_string( ).
-lo_property->set_maxlength( iv_max_length = 3 ). "#EC NOTEXT
-lo_property->set_conversion_exit( 'CUNIT' ). "#EC NOTEXT
-lo_property->set_creatable( abap_false ).
-lo_property->set_updatable( abap_false ).
-lo_property->set_sortable( abap_false ).
-lo_property->set_nullable( abap_false ).
-lo_property->set_filterable( abap_false ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'UnitOfMeasure' iv_abap_fieldname = 'MSEHT' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'ProductId' iv_abap_fieldname = 'PRODUCT_ID' ). "#EC NOTEXT
 lo_property->set_type_edm_string( ).
 lo_property->set_maxlength( iv_max_length = 10 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
@@ -444,7 +394,15 @@ lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_false ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'NetValue' iv_abap_fieldname = 'NETWR' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'Product' iv_abap_fieldname = 'TEXT' ). "#EC NOTEXT
+lo_property->set_type_edm_string( ).
+lo_property->set_maxlength( iv_max_length = 255 ). "#EC NOTEXT
+lo_property->set_creatable( abap_false ).
+lo_property->set_updatable( abap_false ).
+lo_property->set_sortable( abap_false ).
+lo_property->set_nullable( abap_false ).
+lo_property->set_filterable( abap_false ).
+lo_property = lo_entity_type->create_property( iv_property_name = 'NetValue' iv_abap_fieldname = 'NET_AMOUNT' ). "#EC NOTEXT
 lo_property->set_type_edm_decimal( ).
 lo_property->set_precison( iv_precision = 3 ). "#EC NOTEXT
 lo_property->set_maxlength( iv_max_length = 16 ). "#EC NOTEXT
@@ -453,7 +411,7 @@ lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_false ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'CurrencyCode' iv_abap_fieldname = 'WAERK' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'CurrencyCode' iv_abap_fieldname = 'CURRENCY_CODE' ). "#EC NOTEXT
 lo_property->set_type_edm_string( ).
 lo_property->set_maxlength( iv_max_length = 5 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
@@ -461,7 +419,7 @@ lo_property->set_updatable( abap_false ).
 lo_property->set_sortable( abap_false ).
 lo_property->set_nullable( abap_false ).
 lo_property->set_filterable( abap_false ).
-lo_property = lo_entity_type->create_property( iv_property_name = 'CurrencyText' iv_abap_fieldname = 'WAERK_TXT' ). "#EC NOTEXT
+lo_property = lo_entity_type->create_property( iv_property_name = 'CurrencyText' iv_abap_fieldname = 'CURRENCY_TXT' ). "#EC NOTEXT
 lo_property->set_type_edm_string( ).
 lo_property->set_maxlength( iv_max_length = 40 ). "#EC NOTEXT
 lo_property->set_creatable( abap_false ).
@@ -501,7 +459,7 @@ lo_entity_set->set_filter_required( abap_true ).
 *&---------------------------------------------------------------------*
 
 
-  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20160822054349'.                  "#EC NOTEXT
+  CONSTANTS: lc_gen_date_time TYPE timestamp VALUE '20161026025607'.                  "#EC NOTEXT
   rv_last_modified = super->get_last_modified( ).
   IF rv_last_modified LT lc_gen_date_time.
     rv_last_modified = lc_gen_date_time.

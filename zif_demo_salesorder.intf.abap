@@ -1,45 +1,64 @@
-interface ZIF_DEMO_SALESORDER
-  public .
+INTERFACE zif_demo_salesorder
+  PUBLIC .
 
 
-  interfaces ZIF_GW_METHODS .
+  INTERFACES zif_gw_methods .
 
-  types:
+  TYPES:
     BEGIN OF instance_type,
-      vbeln    TYPE vbeln,
+      node_key TYPE snwd_node_key,
       instance TYPE REF TO zif_demo_salesorder,
     END OF instance_type .
-  types:
+  TYPES:
     instance_ttype TYPE TABLE OF instance_type .
 
-  class-data INSTANCES type INSTANCE_TTYPE .
-  data SALESORDER_DATA type ZDEMO_SALESORDER .
+  CLASS-DATA instances TYPE instance_ttype .
+  DATA salesorder_data TYPE zdemo_salesorder .
 
-  class-methods GET
-    importing
-      !VBELN type VBELN
-    returning
-      value(INSTANCE) type ref to ZIF_DEMO_SALESORDER
-    raising
-      ZCX_DEMO_BO .
-  methods GET_VBELN
-    returning
-      value(VBELN) type VBELN
-    raising
-      ZCX_DEMO_BO .
-  methods GET_AUDAT
-    returning
-      value(AUDAT) type EPSORDDAT
-    raising
-      ZCX_DEMO_BO .
-  methods GET_KUNNR
-    returning
-      value(KUNNR) type KUNNR
-    raising
-      ZCX_DEMO_BO .
-  methods GET_ITEMS
-    returning
-      value(ITEMS) type OSREFTAB
-    raising
-      ZCX_DEMO_BO .
-endinterface.
+  CLASS-METHODS get
+    IMPORTING
+      !node_key       TYPE snwd_node_key
+    RETURNING
+      VALUE(instance) TYPE REF TO zif_demo_salesorder
+    RAISING
+      zcx_demo_bo .
+  CLASS-METHODS get_using_so_id
+    IMPORTING
+      !so_id          TYPE snwd_so_id
+    RETURNING
+      VALUE(instance) TYPE REF TO zif_demo_salesorder
+    RAISING
+      zcx_demo_bo .
+  METHODS get_node_key
+    RETURNING
+      VALUE(node_key) TYPE snwd_node_key
+    RAISING
+      zcx_demo_bo .
+  METHODS get_so_id
+    RETURNING
+      VALUE(so_id) TYPE snwd_so_id
+    RAISING
+      zcx_demo_bo .
+  METHODS get_created_at
+    RETURNING
+      VALUE(created_at) TYPE timestampl
+    RAISING
+      zcx_demo_bo .
+  METHODS get_items
+    RETURNING
+      VALUE(items) TYPE osreftab
+    RAISING
+      zcx_demo_bo .
+  METHODS get_item_by_pos
+    IMPORTING
+      !so_item_pos TYPE snwd_so_item_pos
+    RETURNING
+      VALUE(item)  TYPE REF TO zif_demo_salesorderitem
+    RAISING
+      zcx_demo_bo .
+  METHODS get_customer
+    RETURNING
+      VALUE(customer) TYPE REF TO zif_demo_customer
+    RAISING
+      zcx_demo_bo .
+ENDINTERFACE.

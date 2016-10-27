@@ -103,7 +103,7 @@
      <POS>11</POS>
      <NAME>CREATED_TIMESTMP</NAME>
      <TYPE_KIND>P</TYPE_KIND>
-     <LENGTH>15</LENGTH>
+     <LENGTH>8</LENGTH>
      <DECIMALS>0</DECIMALS>
      <IS_KEY/>
     </item>
@@ -111,7 +111,7 @@
      <POS>12</POS>
      <NAME>CHANGED_TIMESTMP</NAME>
      <TYPE_KIND>P</TYPE_KIND>
-     <LENGTH>15</LENGTH>
+     <LENGTH>8</LENGTH>
      <DECIMALS>0</DECIMALS>
      <IS_KEY/>
     </item>
@@ -383,7 +383,7 @@
      <POS>5</POS>
      <NAME>MAPPING_ITEM_ID</NAME>
      <TYPE_KIND>P</TYPE_KIND>
-     <LENGTH>4</LENGTH>
+     <LENGTH>3</LENGTH>
      <DECIMALS>0</DECIMALS>
      <IS_KEY>X</IS_KEY>
     </item>

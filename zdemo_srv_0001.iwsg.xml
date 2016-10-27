@@ -87,7 +87,7 @@
      <POS>9</POS>
      <NAME>CREATED_TIMESTMP</NAME>
      <TYPE_KIND>P</TYPE_KIND>
-     <LENGTH>15</LENGTH>
+     <LENGTH>8</LENGTH>
      <DECIMALS>0</DECIMALS>
      <IS_KEY/>
     </item>
@@ -95,7 +95,7 @@
      <POS>10</POS>
      <NAME>CHANGED_TIMESTMP</NAME>
      <TYPE_KIND>P</TYPE_KIND>
-     <LENGTH>15</LENGTH>
+     <LENGTH>8</LENGTH>
      <DECIMALS>0</DECIMALS>
      <IS_KEY/>
     </item>

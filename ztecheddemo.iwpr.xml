@@ -46,7 +46,7 @@
      <POS>4</POS>
      <NAME>CREATION_TIME</NAME>
      <TYPE_KIND>P</TYPE_KIND>
-     <LENGTH>21</LENGTH>
+     <LENGTH>11</LENGTH>
      <DECIMALS>7</DECIMALS>
      <IS_KEY/>
     </item>
@@ -62,7 +62,7 @@
      <POS>6</POS>
      <NAME>LAST_CHG_TIME</NAME>
      <TYPE_KIND>P</TYPE_KIND>
-     <LENGTH>21</LENGTH>
+     <LENGTH>11</LENGTH>
      <DECIMALS>7</DECIMALS>
      <IS_KEY/>
     </item>
@@ -510,7 +510,7 @@
      <POS>4</POS>
      <NAME>CREATION_TIME</NAME>
      <TYPE_KIND>P</TYPE_KIND>
-     <LENGTH>21</LENGTH>
+     <LENGTH>11</LENGTH>
      <DECIMALS>7</DECIMALS>
      <IS_KEY/>
     </item>
@@ -526,7 +526,7 @@
      <POS>6</POS>
      <NAME>LAST_CHG_TIME</NAME>
      <TYPE_KIND>P</TYPE_KIND>
-     <LENGTH>21</LENGTH>
+     <LENGTH>11</LENGTH>
      <DECIMALS>7</DECIMALS>
      <IS_KEY/>
     </item>

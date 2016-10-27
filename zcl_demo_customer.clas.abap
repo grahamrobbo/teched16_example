@@ -34,15 +34,15 @@ public section.
       !NODE_KEY type SNWD_NODE_KEY
     raising
       ZCX_DEMO_BO .
-protected section.
+PROTECTED SECTION.
 
-  class-data COUNTRIES type ISI_COUNTRY_HELP_TT .
+  CLASS-DATA countries TYPE TABLE OF t005t.
 
-  methods LOAD_CUSTOMER_DATA
-    importing
-      !NODE_KEY type SNWD_NODE_KEY
-    raising
-      ZCX_DEMO_BO .
+  METHODS load_customer_data
+    IMPORTING
+      !node_key TYPE snwd_node_key
+    RAISING
+      zcx_demo_bo .
   PRIVATE SECTION.
 ENDCLASS.
 

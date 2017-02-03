@@ -254,7 +254,7 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
     " $orderby query options
     DATA: orderby_clause TYPE string.
     LOOP AT io_tech_request_context->get_orderby( ) REFERENCE INTO DATA(orderby).
-      IF io_model->get_property1(
+      IF io_model->get_property(
           iv_entity_name = io_tech_request_context->get_entity_type_name( )
           iv_property_name  = orderby->property
         )-sortable = abap_true.

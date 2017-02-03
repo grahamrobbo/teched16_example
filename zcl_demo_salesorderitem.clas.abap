@@ -198,11 +198,10 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
   METHOD zif_gw_methods~get_entity.
 
     TRY.
-        DATA(keys) = io_tech_request_context->get_keys( ).
         zcl_demo_salesorder=>get_using_so_id(
-          CONV #( keys[ name = 'SO_ID' ]-value )
+          CONV #( it_key_tab[ name = 'SalesOrderId' ]-value )
           )->get_item_by_pos(
-          CONV #( keys[ name = 'SO_ITEM_POS' ]-value )
+          CONV #( it_key_tab[ name = 'ItemNo' ]-value )
           )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
 
       CATCH cx_root INTO DATA(cx_root).
@@ -234,10 +233,9 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
             previous = cx_sy_create_data_error.
     ENDTRY.
 
-    DATA(source_keys) = io_tech_request_context->get_source_keys( ).
     TRY.
         DATA(osreftab) = zcl_demo_salesorder=>get_using_so_id(
-          CONV #( source_keys[ name = 'SO_ID' ]-value )
+          CONV #( it_key_tab[ name = 'SalesOrderId' ]-value )
           )->get_items( ).
 
         IF io_tech_request_context->has_inlinecount( ) = abap_true.

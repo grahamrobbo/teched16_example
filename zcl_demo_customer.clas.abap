@@ -209,14 +209,16 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
   METHOD zif_gw_methods~get_entity.
 
     TRY.
-        CASE iv_source_name.
+        CASE io_tech_request_context->get_source_entity_type_name( ).
           WHEN 'SalesOrder'.
-              zcl_demo_salesorder=>get_using_so_id(
-                CONV #( it_key_tab[ name = 'SalesOrderId' ]-value )
-                )->get_customer( )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
+            DATA(source_keys) = io_tech_request_context->get_source_keys( ).
+            zcl_demo_salesorder=>get_using_so_id(
+              CONV #( source_keys[ name = 'SO_ID' ]-value )
+              )->get_customer( )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
           WHEN OTHERS.
+            DATA(keys) = io_tech_request_context->get_keys( ).
             zcl_demo_customer=>get_using_bp_id(
-              CONV #( it_key_tab[ name = 'CustomerId' ]-value )
+              CONV #( keys[ name = 'BP_ID' ]-value )
               )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
         ENDCASE.
 
@@ -251,34 +253,32 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
 
     " $orderby query options
     DATA: orderby_clause TYPE string.
-    LOOP AT it_order REFERENCE INTO DATA(order).
-      DATA(abap_field) = io_model->get_sortable_abap_field_name(
-          iv_entity_name = iv_entity_name
-          iv_field_name  = order->property ).
-      IF abap_field IS INITIAL.
+    LOOP AT io_tech_request_context->get_orderby( ) REFERENCE INTO DATA(orderby).
+      IF io_model->get_property(
+          iv_entity_name = io_tech_request_context->get_entity_type_name( )
+          iv_property_name  = orderby->property
+        )-sortable = abap_true.
+        CASE orderby->property. " This is where we add table aliases for the SQL join
+          WHEN 'BP_ID' OR 'COMPANY_NAME'.
+            orderby_clause = orderby_clause &&
+              |, BP~{ orderby->property } { orderby->order CASE = UPPER }ENDING |.
+          WHEN OTHERS.
+            orderby_clause = orderby_clause &&
+              |, AD~{ orderby->property } { orderby->order CASE = UPPER }ENDING |.
+        ENDCASE.
+      ELSE.
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid  = /iwbep/cx_mgw_busi_exception=>business_error
-            message = |Order parameter '{ order->property }' is not supported|.
+            message = |Order parameter '{ orderby->property }' is not supported|.
       ENDIF.
-      CASE abap_field. " This is where we add table aliases for the SQL join
-        WHEN 'BP_ID' OR 'COMPANY_NAME'.
-          orderby_clause = orderby_clause &&
-            |, BP~{ abap_field } { order->order CASE = UPPER }ENDING |.
-        WHEN OTHERS.
-          orderby_clause = orderby_clause &&
-            |, AD~{ abap_field } { order->order CASE = UPPER }ENDING |.
-      ENDCASE.
     ENDLOOP.
     SHIFT orderby_clause LEFT DELETING LEADING ', '.
 
     " $filterby query options
     DATA: where_clause   TYPE string.
-    LOOP AT it_filter_select_options REFERENCE INTO DATA(option).
-      abap_field = io_model->get_filterable_abap_field_name(
-          iv_entity_name = iv_entity_name
-          iv_field_name  = option->property ).
-      CASE abap_field.
+    LOOP AT io_tech_request_context->get_filter( )->get_filter_select_options( ) REFERENCE INTO DATA(option).
+      CASE option->property.
         WHEN 'BP_ID'.
           DATA(bp_range) = option->select_options.
           where_clause = |{ where_clause } & BP~BP_ID IN @BP_RANGE|.
@@ -307,7 +307,7 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
     IF sy-subrc NE 0. " Catch complex $filter queries
       where_clause = io_tech_request_context->get_filter( )->get_filter_string( ).
       " This is where we add table aliases for the SQL join
-      " All this is pretty flakey as we have not really parsed the where clause
+      " All this is a bit flakey as we have not really parsed the where clause
       " in a way that will avoid the consumer building an invalid $filter clause
       REPLACE ALL OCCURRENCES OF ` BP_ID ` IN where_clause WITH ` BP~BP_ID `.
       REPLACE ALL OCCURRENCES OF ` COMPANY_NAME ` IN where_clause WITH ` BP~COMPANY_NAME `.
@@ -320,6 +320,11 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
     SHIFT where_clause LEFT DELETING LEADING ' &'.
     REPLACE ALL OCCURRENCES OF '&' IN where_clause WITH 'AND'.
 
+    DATA: top  TYPE i,
+          skip TYPE i.
+    top = io_tech_request_context->get_top( ). "why does this API return a string?
+    skip = io_tech_request_context->get_skip( ).
+
     TRY.
         " $inlinecount=allpages
         IF io_tech_request_context->has_inlinecount( ) = abap_true.
@@ -330,7 +335,7 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
               INNER JOIN snwd_ad AS ad
               ON bp~address_guid = ad~node_key
             WHERE (where_clause).
-          es_response_context-inlinecount = dbcount.
+          es_response_context-inlinecount = dbcount. "why is this a string?
         ENDIF.
 
         " Get primary keys
@@ -340,11 +345,11 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
             ON bp~address_guid = ad~node_key
               WHERE (where_clause)
               ORDER BY (orderby_clause)
-              INTO CORRESPONDING FIELDS of @<entity>.
+              INTO CORRESPONDING FIELDS OF @<entity>.
 
-          CHECK sy-dbcnt > is_paging-skip.
+          CHECK sy-dbcnt > skip.
           APPEND <entity> TO <entityset>.
-          IF is_paging-top > 0 AND lines( <entityset> ) GE is_paging-top.
+          IF top > 0 AND lines( <entityset> ) GE top.
             EXIT.
           ENDIF.
         ENDSELECT.

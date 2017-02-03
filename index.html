@@ -31,13 +31,26 @@
 <a id="welcome-to-github-pages" class="anchor" href="#welcome" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome.</h3>
         <p>Thanks for your interest in my presentation UX202 - Building Services for Gateway. You can grab the ABAP code here and install it on your own system to look at it more closely and see it in action.</p>
         <h3>
-<a id="update" class="anchor" href="#update" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>*** Update ***</h3>
+<a id="update" class="anchor" href="#update" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>*** Update 2 - February 2017 ***</h3>
+        <p>SAP have deprecated a significant part of the standard NetWeaver Gateway interface parameters.</p>
+        <p>This is nicely described in <a href="https://blogs.sap.com/2017/02/01/avoid-using-deprecated-sap-gateway-apis-in-your-odata-service-implementation/" target="_blank">this blog</a> by Nabi Zamani.</p>
+        <p>I have refactored this demo code to remove all references to the deprecated interface parameters.</p>
+        <p>The downside is that the code snippets in the slides no longer match the code examples. But the concepts and  programming patterns described here remain the same.</p>
+        <p>The new code has much simplier interfaces. What used to look like this...</p>
+        <p><img src="./img/b4v3.png" /></p>
+        <p>... now looks like this ...</p>
+        <p><img src="./img/aftv3.png" /></p>
+        <h3>
+<a id="update" class="anchor" href="#update" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>*** Update 1 - October 2016 ***</h3>
         <p>At <a href="https://github.com/gregorwolf" target="_blank">@gregorwolf</a>'s suggestion I have changed my demo code to use the <a href="http://go.sap.com/documents/2012/09/2a404253-5b7c-0010-82c7-eda71af511fa.html" target="_blank">NetWeaver Enterprise Procurement Model</a> (EPM) tables rather than ERP tables. This means you can now install the code on non-ERP ABAP systems.</p>
         <p>The downside is that the slides no longer 100% match the code examples. If you prefer to use the original version you can find it <a href="https://github.com/grahamrobbo/teched16_example/releases/tag/v1.0" target="_blank">here</a>.</p>
         <h3>
-<a id="designer-templates" class="anchor" href="#abapGit" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>abapGit</h3>
+<a id="designer-templates" class="anchor" href="#abapGit" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a><img src="./img/abapgit.png" /></h3>
         <p>To install the code onto your ABAP system you will need to use the <a href="https://github.com/larshp/abapGit">abapGit</a> project by <a href="https://github.com/larshp" class="user-mention">@larshp</a>.</p>
         <p>If you haven't seen abapGit before I highly recommend you take a good look at it. If you find it useful perhaps you could consider joining the project and making your own contributions?</p>
+        <p>
+            abapGit will transfer the ABAP code from my GitHub repository to a package on your ABAP system. I recommend using a local package just for this purpose called something like $GWDEMO.
+        </p>
         <h3>
 <a id="creating-pages-manually" class="anchor" href="#setup" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Setup</h3>
         <p>Once all objects are activated you will need to maintain the MPC and DPC locations. The below screenshot shows where to find this in the IMG - and it is also covered on slides 7- through 73 of the presentation.</p>
@@ -45,7 +58,22 @@
             <img src="./img/img.jpg" />
         </p>
         <p>
-            The final step to get the Gateway Service running is to add a system alias. You do this in transaction /IWFND/MAINT_SERVICE
+            <img src="./img/assign_model.jpg" />
+        </p>
+        <p>
+            You will then need to register the service 
+        </p>
+        <p>
+            <img src="./img/add_service.jpg" />
+        </p>
+        <p>
+            Select the "Add Service" button
+        </p>
+        <p>
+            <img src="./img/addservice.jpg" />
+        </p>
+        <p>
+            The final step to get the Gateway Service running is to add a system alias.
         </p>
         <p>
             <img src="./img/system_alias.png" />

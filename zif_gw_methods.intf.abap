@@ -4,12 +4,7 @@ interface ZIF_GW_METHODS
 
   class-methods CREATE_ENTITY
     importing
-      !IV_ENTITY_NAME type STRING
-      !IV_ENTITY_SET_NAME type STRING
-      !IV_SOURCE_NAME type STRING
-      !IT_KEY_TAB type /IWBEP/T_MGW_NAME_VALUE_PAIR
       !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITY_C optional
-      !IT_NAVIGATION_PATH type /IWBEP/T_MGW_NAVIGATION_PATH
       !IO_DATA_PROVIDER type ref to /IWBEP/IF_MGW_ENTRY_PROVIDER optional
       !IO_MODEL type ref to ZCL_GW_MODEL
       !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
@@ -20,12 +15,7 @@ interface ZIF_GW_METHODS
       /IWBEP/CX_MGW_TECH_EXCEPTION .
   class-methods CREATE_DEEP_ENTITY
     importing
-      !IV_ENTITY_NAME type STRING optional
-      !IV_ENTITY_SET_NAME type STRING optional
-      !IV_SOURCE_NAME type STRING optional
       !IO_DATA_PROVIDER type ref to /IWBEP/IF_MGW_ENTRY_PROVIDER
-      !IT_KEY_TAB type /IWBEP/T_MGW_NAME_VALUE_PAIR optional
-      !IT_NAVIGATION_PATH type /IWBEP/T_MGW_NAVIGATION_PATH optional
       !IO_EXPAND type ref to /IWBEP/IF_MGW_ODATA_EXPAND
       !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITY_C optional
       !IO_MODEL type ref to ZCL_GW_MODEL
@@ -37,12 +27,7 @@ interface ZIF_GW_METHODS
       /IWBEP/CX_MGW_TECH_EXCEPTION .
   class-methods DELETE_ENTITY
     importing
-      !IV_ENTITY_NAME type STRING
-      !IV_ENTITY_SET_NAME type STRING
-      !IV_SOURCE_NAME type STRING
-      !IT_KEY_TAB type /IWBEP/T_MGW_NAME_VALUE_PAIR
       !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITY_D optional
-      !IT_NAVIGATION_PATH type /IWBEP/T_MGW_NAVIGATION_PATH
       !IO_MODEL type ref to ZCL_GW_MODEL
       !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
     raising
@@ -50,13 +35,7 @@ interface ZIF_GW_METHODS
       /IWBEP/CX_MGW_TECH_EXCEPTION .
   class-methods GET_ENTITY
     importing
-      !IV_ENTITY_NAME type STRING
-      !IV_ENTITY_SET_NAME type STRING
-      !IV_SOURCE_NAME type STRING
-      !IT_KEY_TAB type /IWBEP/T_MGW_NAME_VALUE_PAIR
-      !IO_REQUEST_OBJECT type ref to /IWBEP/IF_MGW_REQ_ENTITY optional
       !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITY optional
-      !IT_NAVIGATION_PATH type /IWBEP/T_MGW_NAVIGATION_PATH
       !IO_MODEL type ref to ZCL_GW_MODEL
       !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
     exporting
@@ -67,16 +46,6 @@ interface ZIF_GW_METHODS
       /IWBEP/CX_MGW_TECH_EXCEPTION .
   class-methods GET_ENTITYSET
     importing
-      !IV_ENTITY_NAME type STRING
-      !IV_ENTITY_SET_NAME type STRING
-      !IV_SOURCE_NAME type STRING
-      !IT_FILTER_SELECT_OPTIONS type /IWBEP/T_MGW_SELECT_OPTION
-      !IS_PAGING type /IWBEP/S_MGW_PAGING
-      !IT_KEY_TAB type /IWBEP/T_MGW_NAME_VALUE_PAIR
-      !IT_NAVIGATION_PATH type /IWBEP/T_MGW_NAVIGATION_PATH
-      !IT_ORDER type /IWBEP/T_MGW_SORTING_ORDER
-      !IV_FILTER_STRING type STRING
-      !IV_SEARCH_STRING type STRING
       !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITYSET
       !IO_MODEL type ref to ZCL_GW_MODEL
       !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
@@ -88,12 +57,7 @@ interface ZIF_GW_METHODS
       /IWBEP/CX_MGW_TECH_EXCEPTION .
   class-methods UPDATE_ENTITY
     importing
-      !IV_ENTITY_NAME type STRING
-      !IV_ENTITY_SET_NAME type STRING
-      !IV_SOURCE_NAME type STRING
-      !IT_KEY_TAB type /IWBEP/T_MGW_NAME_VALUE_PAIR
       !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITY_U optional
-      !IT_NAVIGATION_PATH type /IWBEP/T_MGW_NAVIGATION_PATH
       !IO_DATA_PROVIDER type ref to /IWBEP/IF_MGW_ENTRY_PROVIDER optional
       !IO_MODEL type ref to ZCL_GW_MODEL
       !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
@@ -104,8 +68,6 @@ interface ZIF_GW_METHODS
       /IWBEP/CX_MGW_TECH_EXCEPTION .
   class-methods EXECUTE_ACTION
     importing
-      !IV_ACTION_NAME type STRING
-      !IT_PARAMETER type /IWBEP/T_MGW_NAME_VALUE_PAIR
       !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_FUNC_IMPORT
       !IO_MODEL type ref to ZCL_GW_MODEL
       !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional

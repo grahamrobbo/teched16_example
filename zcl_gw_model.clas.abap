@@ -1,49 +1,55 @@
-CLASS zcl_gw_model DEFINITION
-  PUBLIC
-  FINAL
-  CREATE PUBLIC .
+class ZCL_GW_MODEL definition
+  public
+  final
+  create public .
 
-  PUBLIC SECTION.
+public section.
 
-    METHODS constructor
-      IMPORTING
-        !runtime TYPE REF TO /iwbep/if_mgw_conv_srv_runtime
-      RAISING
-        /iwbep/cx_mgw_tech_exception .
-    METHODS get_abap_field_name
-      IMPORTING
-        !iv_entity_name      TYPE string
-        !iv_field_name       TYPE string
-      RETURNING
-        VALUE(rv_abap_field) TYPE string .
-    METHODS get_sortable_abap_field_name
-      IMPORTING
-        !iv_entity_name      TYPE string
-        !iv_field_name       TYPE string
-      RETURNING
-        VALUE(rv_abap_field) TYPE string .
-    METHODS get_filterable_abap_field_name
-      IMPORTING
-        !iv_entity_name      TYPE string
-        !iv_field_name       TYPE string
-      RETURNING
-        VALUE(rv_abap_field) TYPE string .
+  methods CONSTRUCTOR
+    importing
+      !RUNTIME type ref to /IWBEP/IF_MGW_CONV_SRV_RUNTIME
+    raising
+      /IWBEP/CX_MGW_TECH_EXCEPTION .
+  methods GET_ABAP_FIELD_NAME
+    importing
+      !IV_ENTITY_NAME type STRING
+      !IV_FIELD_NAME type STRING
+    returning
+      value(RV_ABAP_FIELD) type STRING .
+  methods GET_SORTABLE_ABAP_FIELD_NAME
+    importing
+      !IV_ENTITY_NAME type STRING
+      !IV_FIELD_NAME type STRING
+    returning
+      value(RV_ABAP_FIELD) type STRING .
+  methods GET_FILTERABLE_ABAP_FIELD_NAME
+    importing
+      !IV_ENTITY_NAME type STRING
+      !IV_FIELD_NAME type STRING
+    returning
+      value(RV_ABAP_FIELD) type STRING .
+  methods GET_PROPERTY1
+    importing
+      !IV_ENTITY_NAME type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_INTERNAL_NAME
+      !IV_PROPERTY_NAME type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_INTERNAL_NAME
+    returning
+      value(RS_PROPERTY) type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_S_MED_PROPERTY .
+  methods GET_PROPERTY
+    importing
+      !IV_ENTITY_NAME type STRING
+      !IV_FIELD_NAME type STRING
+    returning
+      value(RS_PROPERTY) type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_S_MED_PROPERTY .
   PROTECTED SECTION.
-  PRIVATE SECTION.
+private section.
 
-    DATA mpc TYPE REF TO /iwbep/if_mgw_odata_re_model .
+  data MPC type ref to /IWBEP/IF_MGW_ODATA_RE_MODEL .
 
-    METHODS get_entity_properties
-      IMPORTING
-        !iv_name             TYPE /iwbep/if_mgw_med_odata_types=>ty_e_med_internal_name
-      RETURNING
-        VALUE(rt_properties) TYPE /iwbep/if_mgw_med_odata_types=>ty_t_med_properties .
-    METHODS get_property
-      IMPORTING
-        !iv_entity_name    TYPE string
-        !iv_field_name     TYPE string
-      RETURNING
-        VALUE(rs_property) TYPE /iwbep/if_mgw_med_odata_types=>ty_s_med_property .
+  methods GET_ENTITY_PROPERTIES
+    importing
+      !IV_NAME type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_INTERNAL_NAME
+    returning
+      value(RT_PROPERTIES) type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_T_MED_PROPERTIES .
 ENDCLASS.
 
 
@@ -98,6 +104,15 @@ CLASS ZCL_GW_MODEL IMPLEMENTATION.
     DATA(properties) = get_entity_properties( |{ iv_entity_name }| ).
 
     rs_property = properties[ external_name = iv_field_name ].
+
+  ENDMETHOD.
+
+
+  METHOD GET_PROPERTY1.
+
+    DATA(properties) = get_entity_properties( |{ iv_entity_name }| ).
+
+    rs_property = properties[ name = iv_property_name ].
 
   ENDMETHOD.
 

@@ -199,17 +199,29 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
 
 
   METHOD zif_gw_methods~get_entity.
+
     TRY.
-        zcl_demo_salesorder=>get_using_so_id(
-          CONV #( it_key_tab[ name = 'SalesOrderId' ]-value )
-          )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
-      CATCH cx_root INTO DATA(cx).
+        CASE io_tech_request_context->get_source_entity_type_name( ).
+          WHEN 'SalesOrderItem'.
+            DATA(source_keys) = io_tech_request_context->get_source_keys( ).
+            zcl_demo_salesorder=>get_using_so_id(
+              CONV #( source_keys[ name = 'SO_ID' ]-value )
+              )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
+          WHEN OTHERS.
+            DATA(keys) = io_tech_request_context->get_keys( ).
+            zcl_demo_salesorder=>get_using_so_id(
+              CONV #( keys[ name = 'SO_ID' ]-value )
+              )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
+        ENDCASE.
+
+      CATCH zcx_demo_bo cx_sy_itab_line_not_found INTO DATA(exception).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid   = /iwbep/cx_mgw_busi_exception=>business_error
-            previous = cx
-            message  = |{ cx->get_text( ) }|.
+            previous = exception
+            message  = |{ exception->get_text( ) }|.
     ENDTRY.
+
   ENDMETHOD.
 
 
@@ -231,29 +243,45 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
             previous = cx_sy_create_data_error.
     ENDTRY.
 
+*    " $orderby query options
+*    DATA: orderby_clause TYPE string.
+*    LOOP AT it_order REFERENCE INTO DATA(order).
+*      DATA(abap_field) = io_model->get_sortable_abap_field_name(
+*          iv_entity_name = iv_entity_name
+*          iv_field_name  = order->property ).
+*      IF abap_field IS INITIAL.
+*        RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+*          EXPORTING
+*            textid  = /iwbep/cx_mgw_busi_exception=>business_error
+*            message = |$orderby { order->property } not supported|.
+*      ENDIF.
+*      orderby_clause = orderby_clause &&
+*        |{ abap_field } { order->order CASE = UPPER }ENDING |.
+*    ENDLOOP.
+
     " $orderby query options
     DATA: orderby_clause TYPE string.
-    LOOP AT it_order REFERENCE INTO DATA(order).
-      DATA(abap_field) = io_model->get_sortable_abap_field_name(
-          iv_entity_name = iv_entity_name
-          iv_field_name  = order->property ).
-      IF abap_field IS INITIAL.
+    LOOP AT io_tech_request_context->get_orderby( ) REFERENCE INTO DATA(orderby).
+      IF io_model->get_property1(
+          iv_entity_name = io_tech_request_context->get_entity_type_name( )
+          iv_property_name  = orderby->property
+        )-sortable = abap_true.
+        orderby_clause = orderby_clause &&
+          |{ orderby->property } { orderby->order CASE = UPPER }ENDING |.
+      ELSE.
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid  = /iwbep/cx_mgw_busi_exception=>business_error
-            message = |$orderby { order->property } not supported|.
+            message = |Order parameter '{ orderby->property }' is not supported|.
       ENDIF.
-      orderby_clause = orderby_clause &&
-        |{ abap_field } { order->order CASE = UPPER }ENDING |.
     ENDLOOP.
+    SHIFT orderby_clause LEFT DELETING LEADING ', '.
+
 
     " $filterby query options
     DATA: where_clause   TYPE string.
-    LOOP AT it_filter_select_options REFERENCE INTO DATA(option).
-      abap_field = io_model->get_filterable_abap_field_name(
-          iv_entity_name = iv_entity_name
-          iv_field_name  = option->property ).
-      CASE abap_field.
+    LOOP AT io_tech_request_context->get_filter( )->get_filter_select_options( ) REFERENCE INTO DATA(option).
+      CASE option->property.
         WHEN 'SO_ID'.
           DATA(so_range) = option->select_options.
           where_clause = |{ where_clause } & SO_ID IN @SO_RANGE|.
@@ -267,27 +295,33 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
               filter_param = option->property.
       ENDCASE.
     ENDLOOP.
-    IF sy-subrc NE 0. " Catch complex $filter queries - see ZCL_CUSTOMER->ZIF_GW_METHODS~GET_ENTITYSET for example
-      "where_clause = io_tech_request_context->get_filter( )->get_filter_string( ).
+    IF sy-subrc NE 0. " Catch complex $filter queries - see ZCL_CUSTOMER->ZIF_GW_METHODS~GET_ENTITYSET for better example
+      where_clause = io_tech_request_context->get_filter( )->get_filter_string( ).
     ENDIF.
 
-    CASE iv_source_name.
+    DATA(source_keys) = io_tech_request_context->get_source_keys( ).
+    CASE io_tech_request_context->get_source_entity_type_name( ).
       WHEN 'Customer'.
         TRY.
-            DATA(buyer_guid) = zcl_demo_customer=>get_using_bp_id( CONV #( it_key_tab[ name = 'CustomerId' ]-value ) )->get_node_key( ).
+            DATA(buyer_guid) = zcl_demo_customer=>get_using_bp_id( CONV #( source_keys[ name = 'BP_ID' ]-value ) )->get_node_key( ).
             where_clause = |{ where_clause } & BUYER_GUID = @BUYER_GUID|.
-          CATCH cx_sy_itab_line_not_found INTO DATA(cx_sy_itab_line_not_found).
+          CATCH cx_sy_itab_line_not_found zcx_demo_bo INTO DATA(cx).
             RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
               EXPORTING
                 textid   = /iwbep/cx_mgw_busi_exception=>business_error
-                previous = cx_sy_itab_line_not_found
-                message  = |{ cx_sy_itab_line_not_found->get_text( ) }|.
+                previous = cx
+                message  = |{ cx->get_text( ) }|.
         ENDTRY.
       WHEN OTHERS.
     ENDCASE.
 
     SHIFT where_clause LEFT DELETING LEADING ' &'.
     REPLACE ALL OCCURRENCES OF '&' IN where_clause WITH 'AND'.
+
+    DATA: top  TYPE i,
+          skip TYPE i.
+    top = io_tech_request_context->get_top( ). "why does this API return a string?
+    skip = io_tech_request_context->get_skip( ).
 
     TRY.
         " $inlinecount=allpages
@@ -297,7 +331,7 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
             INTO dbcount
             FROM snwd_so
             WHERE (where_clause).
-          es_response_context-inlinecount = dbcount.
+          es_response_context-inlinecount = dbcount. "why is this a string?
         ENDIF.
 
         " Get primary keys
@@ -306,9 +340,9 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
           FROM snwd_so
           WHERE (where_clause)
           ORDER BY (orderby_clause).
-          CHECK sy-dbcnt > is_paging-skip.
+          CHECK sy-dbcnt > skip.
           APPEND <entity> TO <entityset>.
-          IF is_paging-top > 0 AND lines( <entityset> ) GE is_paging-top.
+          IF top > 0 AND lines( <entityset> ) GE top.
             EXIT.
           ENDIF.
         ENDSELECT.

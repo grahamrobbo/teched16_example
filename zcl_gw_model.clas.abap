@@ -20,6 +20,7 @@ public section.
 private section.
 
   data MPC type ref to /IWBEP/IF_MGW_ODATA_RE_MODEL .
+  data ENTITIES type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_T_MED_ENTITY_TYPES .
 
   methods GET_ENTITY_PROPERTIES
     importing
@@ -44,8 +45,9 @@ CLASS ZCL_GW_MODEL IMPLEMENTATION.
 
 
   METHOD get_entity_properties.
-
-    DATA(entities) = mpc->get_entity_types( ).
+    IF entities IS INITIAL.
+      entities = mpc->get_entity_types( ).
+    ENDIF.
 
     rt_properties = entities[ name = iv_name ]-properties.
   ENDMETHOD.

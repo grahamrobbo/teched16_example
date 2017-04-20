@@ -267,10 +267,14 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
               |, AD~{ orderby->property } { orderby->order CASE = UPPER }ENDING |.
         ENDCASE.
       ELSE.
+        DATA(property) =
+          io_model->get_property(
+            iv_entity_name = io_tech_request_context->get_entity_type_name( )
+            iv_property_name  = orderby->property ).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid  = /iwbep/cx_mgw_busi_exception=>business_error
-            message = |Order parameter '{ orderby->property }' is not supported|.
+            message = |Order property '{ property-external_name }' is not supported|.
       ENDIF.
     ENDLOOP.
     SHIFT orderby_clause LEFT DELETING LEADING ', '.
@@ -298,10 +302,14 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
           DATA(country_range) = option->select_options.
           where_clause = |{ where_clause } & AD~COUNTRY IN @COUNTRY_RANGE|.
         WHEN OTHERS.
+          property =
+            io_model->get_property(
+              iv_entity_name = io_tech_request_context->get_entity_type_name( )
+              iv_property_name  = CONV #( option->property ) ).
           RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
             EXPORTING
               textid       = /iwbep/cx_mgw_busi_exception=>filter_not_supported
-              filter_param = option->property.
+              filter_param = CONV #( property-external_name ).
       ENDCASE.
     ENDLOOP.
     IF sy-subrc NE 0. " Catch complex $filter queries

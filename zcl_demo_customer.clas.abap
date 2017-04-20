@@ -254,10 +254,11 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
     " $orderby query options
     DATA: orderby_clause TYPE string.
     LOOP AT io_tech_request_context->get_orderby( ) REFERENCE INTO DATA(orderby).
-      IF io_model->get_property(
+      DATA(property) =
+        io_model->get_property(
           iv_entity_name = io_tech_request_context->get_entity_type_name( )
-          iv_property_name  = orderby->property
-        )-sortable = abap_true.
+          iv_property_name  = orderby->property ).
+      IF property-sortable = abap_true.
         CASE orderby->property. " This is where we add table aliases for the SQL join
           WHEN 'BP_ID' OR 'COMPANY_NAME'.
             orderby_clause = orderby_clause &&
@@ -267,10 +268,6 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
               |, AD~{ orderby->property } { orderby->order CASE = UPPER }ENDING |.
         ENDCASE.
       ELSE.
-        DATA(property) =
-          io_model->get_property(
-            iv_entity_name = io_tech_request_context->get_entity_type_name( )
-            iv_property_name  = orderby->property ).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid  = /iwbep/cx_mgw_busi_exception=>business_error
@@ -281,36 +278,38 @@ CLASS ZCL_DEMO_CUSTOMER IMPLEMENTATION.
 
     " $filterby query options
     DATA: where_clause   TYPE string.
-    LOOP AT io_tech_request_context->get_filter( )->get_filter_select_options( ) REFERENCE INTO DATA(option).
-      CASE option->property.
-        WHEN 'BP_ID'.
-          DATA(bp_range) = option->select_options.
-          where_clause = |{ where_clause } & BP~BP_ID IN @BP_RANGE|.
-        WHEN 'COMPANY_NAME'.
-          DATA(name_range) = option->select_options.
-          where_clause = |{ where_clause } & BP~COMPANY_NAME IN @NAME_RANGE|.
-        WHEN 'STREET'.
-          DATA(street_range) = option->select_options.
-          where_clause = |{ where_clause } & AD~STREET IN @STREET_RANGE|.
-        WHEN 'CITY'.
-          DATA(city_range) = option->select_options.
-          where_clause = |{ where_clause } & AD~CITY IN @CITY_RANGE|.
-        WHEN 'POSTAL_CODE'.
-          DATA(pcode_range) = option->select_options.
-          where_clause = |{ where_clause } & AD~POSTAL_CODE IN @PCODE_RANGE|.
-        WHEN 'COUNTRY'.
-          DATA(country_range) = option->select_options.
-          where_clause = |{ where_clause } & AD~COUNTRY IN @COUNTRY_RANGE|.
-        WHEN OTHERS.
-          property =
-            io_model->get_property(
-              iv_entity_name = io_tech_request_context->get_entity_type_name( )
-              iv_property_name  = CONV #( option->property ) ).
-          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
-            EXPORTING
-              textid       = /iwbep/cx_mgw_busi_exception=>filter_not_supported
-              filter_param = CONV #( property-external_name ).
-      ENDCASE.
+    LOOP AT io_tech_request_context->get_filter( )->get_filter_select_options( ) REFERENCE INTO DATA(filterby).
+      property =
+        io_model->get_property(
+          iv_entity_name = io_tech_request_context->get_entity_type_name( )
+          iv_property_name  = CONV #( filterby->property ) ).
+      IF property-filterable = abap_true.
+        CASE filterby->property.
+          WHEN 'BP_ID'.
+            DATA(bp_range) = filterby->select_options.
+            where_clause = |{ where_clause } & BP~BP_ID IN @BP_RANGE|.
+          WHEN 'COMPANY_NAME'.
+            DATA(name_range) = filterby->select_options.
+            where_clause = |{ where_clause } & BP~COMPANY_NAME IN @NAME_RANGE|.
+          WHEN 'STREET'.
+            DATA(street_range) = filterby->select_options.
+            where_clause = |{ where_clause } & AD~STREET IN @STREET_RANGE|.
+          WHEN 'CITY'.
+            DATA(city_range) = filterby->select_options.
+            where_clause = |{ where_clause } & AD~CITY IN @CITY_RANGE|.
+          WHEN 'POSTAL_CODE'.
+            DATA(pcode_range) = filterby->select_options.
+            where_clause = |{ where_clause } & AD~POSTAL_CODE IN @PCODE_RANGE|.
+          WHEN 'COUNTRY'.
+            DATA(country_range) = filterby->select_options.
+            where_clause = |{ where_clause } & AD~COUNTRY IN @COUNTRY_RANGE|.
+        ENDCASE.
+      ELSE.
+        RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+          EXPORTING
+            textid       = /iwbep/cx_mgw_busi_exception=>filter_not_supported
+            filter_param = CONV #( property-external_name ).
+      ENDIF.
     ENDLOOP.
     IF sy-subrc NE 0. " Catch complex $filter queries
       where_clause = io_tech_request_context->get_filter( )->get_filter_string( ).

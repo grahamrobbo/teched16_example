@@ -226,6 +226,9 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
 
 
   METHOD zif_gw_methods~get_entityset.
+*--------------------------------------------------------------------*
+* See ZCL_DEMO_CUSTOMER->ZIF_GW_METHODS~GET_ENTITYSET for better example
+*--------------------------------------------------------------------*
 
     FIELD-SYMBOLS: <entityset> TYPE STANDARD TABLE.
     ASSIGN et_entityset TO <entityset>.
@@ -243,36 +246,21 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
             previous = cx_sy_create_data_error.
     ENDTRY.
 
-*    " $orderby query options
-*    DATA: orderby_clause TYPE string.
-*    LOOP AT it_order REFERENCE INTO DATA(order).
-*      DATA(abap_field) = io_model->get_sortable_abap_field_name(
-*          iv_entity_name = iv_entity_name
-*          iv_field_name  = order->property ).
-*      IF abap_field IS INITIAL.
-*        RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
-*          EXPORTING
-*            textid  = /iwbep/cx_mgw_busi_exception=>business_error
-*            message = |$orderby { order->property } not supported|.
-*      ENDIF.
-*      orderby_clause = orderby_clause &&
-*        |{ abap_field } { order->order CASE = UPPER }ENDING |.
-*    ENDLOOP.
-
     " $orderby query options
     DATA: orderby_clause TYPE string.
     LOOP AT io_tech_request_context->get_orderby( ) REFERENCE INTO DATA(orderby).
-      IF io_model->get_property(
+      DATA(property) =
+        io_model->get_property(
           iv_entity_name = io_tech_request_context->get_entity_type_name( )
-          iv_property_name  = orderby->property
-        )-sortable = abap_true.
+          iv_property_name  = orderby->property ).
+      IF property-sortable = abap_true.
         orderby_clause = orderby_clause &&
           |{ orderby->property } { orderby->order CASE = UPPER }ENDING |.
       ELSE.
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
             textid  = /iwbep/cx_mgw_busi_exception=>business_error
-            message = |Order parameter '{ orderby->property }' is not supported|.
+            message = |Order property '{ property-external_name }' is not supported|.
       ENDIF.
     ENDLOOP.
     SHIFT orderby_clause LEFT DELETING LEADING ', '.
@@ -280,22 +268,28 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
 
     " $filterby query options
     DATA: where_clause   TYPE string.
-    LOOP AT io_tech_request_context->get_filter( )->get_filter_select_options( ) REFERENCE INTO DATA(option).
-      CASE option->property.
-        WHEN 'SO_ID'.
-          DATA(so_range) = option->select_options.
-          where_clause = |{ where_clause } & SO_ID IN @SO_RANGE|.
-        WHEN 'CREATED_AT'.
-          DATA(created_range) = option->select_options.
-          where_clause = |{ where_clause } & CREATED_AT IN @CREATED_RANGE|.
-        WHEN OTHERS.
-          RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
-            EXPORTING
-              textid       = /iwbep/cx_mgw_busi_exception=>filter_not_supported
-              filter_param = option->property.
-      ENDCASE.
+    LOOP AT io_tech_request_context->get_filter( )->get_filter_select_options( ) REFERENCE INTO DATA(filterby).
+      property =
+        io_model->get_property(
+          iv_entity_name = io_tech_request_context->get_entity_type_name( )
+          iv_property_name  = CONV #( filterby->property ) ).
+      IF property-filterable = abap_true.
+        CASE filterby->property.
+          WHEN 'SO_ID'.
+            DATA(so_range) = filterby->select_options.
+            where_clause = |{ where_clause } & SO_ID IN @SO_RANGE|.
+          WHEN 'CREATED_AT'.
+            DATA(created_range) = filterby->select_options.
+            where_clause = |{ where_clause } & CREATED_AT IN @CREATED_RANGE|.
+        ENDCASE.
+      ELSE.
+        RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
+          EXPORTING
+            textid       = /iwbep/cx_mgw_busi_exception=>filter_not_supported
+            filter_param = CONV #( property-external_name ).
+      ENDIF.
     ENDLOOP.
-    IF sy-subrc NE 0. " Catch complex $filter queries - see ZCL_CUSTOMER->ZIF_GW_METHODS~GET_ENTITYSET for better example
+    IF sy-subrc NE 0.
       where_clause = io_tech_request_context->get_filter( )->get_filter_string( ).
     ENDIF.
 

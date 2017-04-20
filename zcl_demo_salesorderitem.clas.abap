@@ -217,6 +217,9 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
 
 
   METHOD zif_gw_methods~get_entityset.
+*--------------------------------------------------------------------*
+* See ZCL_DEMO_CUSTOMER->ZIF_GW_METHODS~GET_ENTITYSET for better example
+*--------------------------------------------------------------------*
 
     FIELD-SYMBOLS: <entityset> TYPE STANDARD TABLE.
     ASSIGN et_entityset TO <entityset>.

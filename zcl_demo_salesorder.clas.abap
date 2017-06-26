@@ -206,12 +206,22 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
             DATA(source_keys) = io_tech_request_context->get_source_keys( ).
             zcl_demo_salesorder=>get_using_so_id(
               CONV #( source_keys[ name = 'SO_ID' ]-value )
-              )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
+              )->zif_gw_methods~map_to_entity(
+                EXPORTING
+                  entity      = REF #( er_entity )
+                  entity_name = io_tech_request_context->get_entity_type_name( )
+                  model       = io_model
+              ).
           WHEN OTHERS.
             DATA(keys) = io_tech_request_context->get_keys( ).
             zcl_demo_salesorder=>get_using_so_id(
               CONV #( keys[ name = 'SO_ID' ]-value )
-              )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
+              )->zif_gw_methods~map_to_entity(
+                EXPORTING
+                  entity      = REF #( er_entity )
+                  entity_name = io_tech_request_context->get_entity_type_name( )
+                  model       = io_model
+              ).
         ENDCASE.
 
       CATCH zcx_demo_bo cx_sy_itab_line_not_found INTO DATA(exception).
@@ -380,7 +390,12 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
       ASSIGN entity->* TO <entity>.
       ASSIGN COMPONENT 'NODE_KEY' OF STRUCTURE <entity> TO FIELD-SYMBOL(<node_key>).
       TRY.
-          zcl_demo_salesorder=>get( <node_key> )->zif_gw_methods~map_to_entity( entity ).
+          zcl_demo_salesorder=>get( <node_key> )->zif_gw_methods~map_to_entity(
+                EXPORTING
+                  entity      = entity
+                  entity_name = io_tech_request_context->get_entity_type_name( )
+                  model       = io_model
+              ).
         CATCH zcx_demo_bo.
       ENDTRY.
     ENDLOOP.
@@ -389,7 +404,12 @@ CLASS ZCL_DEMO_SALESORDER IMPLEMENTATION.
 
 
   METHOD zif_gw_methods~map_to_entity.
-    call_all_getters( entity ).
+    call_all_getters(
+      EXPORTING
+        entity      = entity
+        entity_name = entity_name
+        model       = model
+    ).
   ENDMETHOD.
 
 

@@ -14,7 +14,7 @@
 <body>
     <section class="page-header">
         <img src="./img/SAPTECHED_LV16.png" />
-        <h1 class="project-name">UX202 - Building Services for Gateway</h1>
+        <h1 class="project-name">Building NetWeaver Gateway Services</h1>
         <!--         <h2 class="project-tagline">Sample Code</h2> -->
         <a href="./slides/slides.pdf" target="_blank" class="btn">Slides</a>
         <a href="https://github.com/grahamrobbo/teched16_example" class="btn">Sample code</a>
@@ -26,7 +26,12 @@
     <section class="main-content">
         <h3>
 <a id="welcome-to-github-pages" class="anchor" href="#welcome" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Welcome.</h3>
-        <p>Thanks for your interest in my presentation UX202 - Building Services for Gateway. You can grab the ABAP code here and install it on your own system to look at it more closely and see it in action.</p>
+        <p>Thanks for your interest in my presentation "Building NetWeaver Gateway Services". You can grab the ABAP code here and install it on your own system to look at it more closely and see it in action.</p>
+        <h3>
+<a id="update" class="anchor" href="#update" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>*** Update 4 - June 2017 ***</h3>
+        <p>There have been reports of poor performance on some systems in the CALL_ALL_GETTERS method where it uses RTTS (run-time type services) to walk through the entity to determine the ABAP field names. </p>
+        <p>Now if you pass the model and the entity name to the ZIF_GW_METHODS~MAP_TO_ENTITY method it will use the model to determine the ABAP field names which should be faster. Don't know why I didn't do it this way in the first place.</p>
+        <p>This change makes slide 53 in the slide deck out of date. Refer to the <a href="https://github.com/grahamrobbo/teched16_example/pull/6" target="_blank" />Pull Request #6</a> and the code itself to see what has been changed.</p>
         <h3>
 <a id="update" class="anchor" href="#update" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>*** Update 3 - April 2017 ***</h3>
         <p>I have been asked to re-deliver this session on a upcoming ASUG Webcast and also at the SAUG Brisbane Conference in May 2017.</p>

@@ -203,8 +203,12 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
           CONV #( keys[ name = 'SO_ID' ]-value )
           )->get_item_by_pos(
           CONV #( keys[ name = 'SO_ITEM_POS' ]-value )
-          )->zif_gw_methods~map_to_entity( REF #( er_entity ) ).
-
+          )->zif_gw_methods~map_to_entity(
+            EXPORTING
+              entity      = REF #( er_entity )
+              entity_name = io_tech_request_context->get_entity_type_name( )
+              model       = io_model
+          ).
       CATCH cx_root INTO DATA(cx_root).
         RAISE EXCEPTION TYPE /iwbep/cx_mgw_busi_exception
           EXPORTING
@@ -253,7 +257,12 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
           item ?= osref.
           APPEND INITIAL LINE TO <entityset> REFERENCE INTO entity.
           CHECK io_tech_request_context->has_count( ) NE abap_true.
-          item->zif_gw_methods~map_to_entity( entity ).
+          item->zif_gw_methods~map_to_entity(
+            EXPORTING
+              entity      = entity
+              entity_name = io_tech_request_context->get_entity_type_name( )
+              model       = io_model
+          ).
         ENDLOOP.
 
       CATCH cx_sy_itab_line_not_found zcx_demo_bo INTO DATA(exception).
@@ -268,7 +277,12 @@ CLASS ZCL_DEMO_SALESORDERITEM IMPLEMENTATION.
 
 
   METHOD zif_gw_methods~map_to_entity.
-    call_all_getters( entity ).
+    call_all_getters(
+      EXPORTING
+        entity      = entity
+        entity_name = entity_name
+        model       = model
+    ).
   ENDMETHOD.
 
 

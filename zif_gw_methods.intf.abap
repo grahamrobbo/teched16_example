@@ -1,84 +1,86 @@
-INTERFACE zif_gw_methods
-  PUBLIC .
+interface ZIF_GW_METHODS
+  public .
 
 
-  CLASS-METHODS create_entity
-    IMPORTING
-      !io_tech_request_context TYPE REF TO /iwbep/if_mgw_req_entity_c OPTIONAL
-      !io_data_provider        TYPE REF TO /iwbep/if_mgw_entry_provider OPTIONAL
-      !io_model                TYPE REF TO zcl_gw_model
-      !io_message_container    TYPE REF TO /iwbep/if_message_container OPTIONAL
-    EXPORTING
-      !er_entity               TYPE data
-    RAISING
-      /iwbep/cx_mgw_busi_exception
-      /iwbep/cx_mgw_tech_exception .
-  CLASS-METHODS create_deep_entity
-    IMPORTING
-      !io_data_provider        TYPE REF TO /iwbep/if_mgw_entry_provider
-      !io_expand               TYPE REF TO /iwbep/if_mgw_odata_expand
-      !io_tech_request_context TYPE REF TO /iwbep/if_mgw_req_entity_c OPTIONAL
-      !io_model                TYPE REF TO zcl_gw_model
-      !io_message_container    TYPE REF TO /iwbep/if_message_container OPTIONAL
-    EXPORTING
-      !er_deep_entity          TYPE REF TO data
-    RAISING
-      /iwbep/cx_mgw_busi_exception
-      /iwbep/cx_mgw_tech_exception .
-  CLASS-METHODS delete_entity
-    IMPORTING
-      !io_tech_request_context TYPE REF TO /iwbep/if_mgw_req_entity_d OPTIONAL
-      !io_model                TYPE REF TO zcl_gw_model
-      !io_message_container    TYPE REF TO /iwbep/if_message_container OPTIONAL
-    RAISING
-      /iwbep/cx_mgw_busi_exception
-      /iwbep/cx_mgw_tech_exception .
-  CLASS-METHODS get_entity
-    IMPORTING
-      !io_tech_request_context TYPE REF TO /iwbep/if_mgw_req_entity OPTIONAL
-      !io_model                TYPE REF TO zcl_gw_model
-      !io_message_container    TYPE REF TO /iwbep/if_message_container OPTIONAL
-    EXPORTING
-      !er_entity               TYPE data
-      !es_response_context     TYPE /iwbep/if_mgw_appl_srv_runtime=>ty_s_mgw_response_entity_cntxt
-    RAISING
-      /iwbep/cx_mgw_busi_exception
-      /iwbep/cx_mgw_tech_exception .
-  CLASS-METHODS get_entityset
-    IMPORTING
-      !io_tech_request_context TYPE REF TO /iwbep/if_mgw_req_entityset
-      !io_model                TYPE REF TO zcl_gw_model
-      !io_message_container    TYPE REF TO /iwbep/if_message_container OPTIONAL
-    EXPORTING
-      !et_entityset            TYPE data
-      !es_response_context     TYPE /iwbep/if_mgw_appl_srv_runtime=>ty_s_mgw_response_context
-    RAISING
-      /iwbep/cx_mgw_busi_exception
-      /iwbep/cx_mgw_tech_exception .
-  CLASS-METHODS update_entity
-    IMPORTING
-      !io_tech_request_context TYPE REF TO /iwbep/if_mgw_req_entity_u OPTIONAL
-      !io_data_provider        TYPE REF TO /iwbep/if_mgw_entry_provider OPTIONAL
-      !io_model                TYPE REF TO zcl_gw_model
-      !io_message_container    TYPE REF TO /iwbep/if_message_container OPTIONAL
-    EXPORTING
-      !er_entity               TYPE data
-    RAISING
-      /iwbep/cx_mgw_busi_exception
-      /iwbep/cx_mgw_tech_exception .
-  CLASS-METHODS execute_action
-    IMPORTING
-      !io_tech_request_context TYPE REF TO /iwbep/if_mgw_req_func_import
-      !io_model                TYPE REF TO zcl_gw_model
-      !io_message_container    TYPE REF TO /iwbep/if_message_container OPTIONAL
-    EXPORTING
-      !er_data                 TYPE REF TO data
-    RAISING
-      /iwbep/cx_mgw_busi_exception
-      /iwbep/cx_mgw_tech_exception .
-  METHODS map_to_entity
-    IMPORTING
-      !entity TYPE REF TO data
-    RAISING
-      zcx_demo_bo .
-ENDINTERFACE.
+  class-methods CREATE_ENTITY
+    importing
+      !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITY_C optional
+      !IO_DATA_PROVIDER type ref to /IWBEP/IF_MGW_ENTRY_PROVIDER optional
+      !IO_MODEL type ref to ZCL_GW_MODEL
+      !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
+    exporting
+      !ER_ENTITY type DATA
+    raising
+      /IWBEP/CX_MGW_BUSI_EXCEPTION
+      /IWBEP/CX_MGW_TECH_EXCEPTION .
+  class-methods CREATE_DEEP_ENTITY
+    importing
+      !IO_DATA_PROVIDER type ref to /IWBEP/IF_MGW_ENTRY_PROVIDER
+      !IO_EXPAND type ref to /IWBEP/IF_MGW_ODATA_EXPAND
+      !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITY_C optional
+      !IO_MODEL type ref to ZCL_GW_MODEL
+      !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
+    exporting
+      !ER_DEEP_ENTITY type ref to DATA
+    raising
+      /IWBEP/CX_MGW_BUSI_EXCEPTION
+      /IWBEP/CX_MGW_TECH_EXCEPTION .
+  class-methods DELETE_ENTITY
+    importing
+      !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITY_D optional
+      !IO_MODEL type ref to ZCL_GW_MODEL
+      !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
+    raising
+      /IWBEP/CX_MGW_BUSI_EXCEPTION
+      /IWBEP/CX_MGW_TECH_EXCEPTION .
+  class-methods GET_ENTITY
+    importing
+      !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITY optional
+      !IO_MODEL type ref to ZCL_GW_MODEL
+      !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
+    exporting
+      !ER_ENTITY type DATA
+      !ES_RESPONSE_CONTEXT type /IWBEP/IF_MGW_APPL_SRV_RUNTIME=>TY_S_MGW_RESPONSE_ENTITY_CNTXT
+    raising
+      /IWBEP/CX_MGW_BUSI_EXCEPTION
+      /IWBEP/CX_MGW_TECH_EXCEPTION .
+  class-methods GET_ENTITYSET
+    importing
+      !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITYSET
+      !IO_MODEL type ref to ZCL_GW_MODEL
+      !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
+    exporting
+      !ET_ENTITYSET type DATA
+      !ES_RESPONSE_CONTEXT type /IWBEP/IF_MGW_APPL_SRV_RUNTIME=>TY_S_MGW_RESPONSE_CONTEXT
+    raising
+      /IWBEP/CX_MGW_BUSI_EXCEPTION
+      /IWBEP/CX_MGW_TECH_EXCEPTION .
+  class-methods UPDATE_ENTITY
+    importing
+      !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_ENTITY_U optional
+      !IO_DATA_PROVIDER type ref to /IWBEP/IF_MGW_ENTRY_PROVIDER optional
+      !IO_MODEL type ref to ZCL_GW_MODEL
+      !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
+    exporting
+      !ER_ENTITY type DATA
+    raising
+      /IWBEP/CX_MGW_BUSI_EXCEPTION
+      /IWBEP/CX_MGW_TECH_EXCEPTION .
+  class-methods EXECUTE_ACTION
+    importing
+      !IO_TECH_REQUEST_CONTEXT type ref to /IWBEP/IF_MGW_REQ_FUNC_IMPORT
+      !IO_MODEL type ref to ZCL_GW_MODEL
+      !IO_MESSAGE_CONTAINER type ref to /IWBEP/IF_MESSAGE_CONTAINER optional
+    exporting
+      !ER_DATA type ref to DATA
+    raising
+      /IWBEP/CX_MGW_BUSI_EXCEPTION
+      /IWBEP/CX_MGW_TECH_EXCEPTION .
+  methods MAP_TO_ENTITY
+    importing
+      !ENTITY type ref to DATA
+      !ENTITY_NAME type /IWBEP/IF_MGW_MED_ODATA_TYPES=>TY_E_MED_INTERNAL_NAME optional
+      !MODEL type ref to ZCL_GW_MODEL optional
+    raising
+      ZCX_DEMO_BO .
+endinterface.
